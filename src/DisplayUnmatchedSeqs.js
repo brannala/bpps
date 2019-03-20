@@ -5,7 +5,7 @@ class DisplayUnmatchedSeqs extends Component {
     constructor(props) {
         super(props);
     }
-
+// creates a formatted string of unmatched sequences from vector unMatchedVec for display
     getUnmatchedAsString(unMatchedVec)
     {
         let unmatched = "";
@@ -16,8 +16,7 @@ class DisplayUnmatchedSeqs extends Component {
         }
         return unmatched.trim();
     }
-
-
+    
     render() {
         return (
             <div>
@@ -31,9 +30,5 @@ class DisplayUnmatchedSeqs extends Component {
         );
     }
 }
-
-
-
-
 
 export default DisplayUnmatchedSeqs;

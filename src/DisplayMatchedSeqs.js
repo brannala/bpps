@@ -6,14 +6,11 @@ class DisplayMatchedSeqs extends Component {
         super(props);
         this.getMatchedAsString = this.getMatchedAsString.bind(this); 
     }
-
-
+    // creates a string for each sequence name + species name match for display    
     getMatchedAsString()
     {
         let matched = "";
         console.log(this.props.seqMatches.matchedSeqs);
-
-        
         if(this.props.seqMatches.matchedSeqs.length>0)
         {
             for(let i=0; i < this.props.seqMatches.matchedSeqs.length; i++)
@@ -24,8 +21,6 @@ class DisplayMatchedSeqs extends Component {
         } 
         return matched.trim();
     }
-
-
 
     render() {
         return (
@@ -40,9 +35,5 @@ class DisplayMatchedSeqs extends Component {
         );
     }
 }
-
-
-
-
 
 export default DisplayMatchedSeqs;

@@ -1,3 +1,4 @@
+// parses text in bpp format to create sequenceData object
 
 function SeqRead(input) {
 
@@ -5,9 +6,9 @@ function SeqRead(input) {
     let modInput;
     const sequenceData = [];
     let locusNo = 0;
-
+    
     const errorResult = (err) => { return { sequenceData: [], error: `error: unexpected input: ${err}` }; };
-
+    // check for correct number of sites in each sequence 
     function checkSequences(sData) {
         for(let i=0; i< sData.length; i++)
             for(let j in sData[i].sequences)
@@ -52,7 +53,6 @@ function SeqRead(input) {
         return errorResult(checkResult.error_message);
     else
         return {sequenceData: sequenceData, error: null};
-
 }
 
 export default SeqRead;

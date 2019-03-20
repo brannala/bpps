@@ -6,13 +6,12 @@ class DisplayFilters extends Component {
         super(props);
         this.createFilters = this.createFilters.bind(this);
     }
-
+    // formats a filter item as html list element <dl>item</dl> for display
     createFilters(item)
     {
         return <dl key = {item.key} >{item.text}</dl>
     }
     
-
     render() {
         let filterList = this.props.filters;
         let filterItems = filterList.map(this.createFilters);
@@ -27,9 +26,5 @@ class DisplayFilters extends Component {
         );
     }
 }
-
-
-
-
 
 export default DisplayFilters;

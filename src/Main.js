@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import Sequences from "./Sequences";
 import MapFile from "./MapFile";
-import FormatSeqs, {formatSeqs, whiteSpStrip, getCounts} from "./FormatSeqs";
+import FormatSeqs, {formatSeqs, getCounts} from "./FormatSeqs";
 import MapFunctions, {uniqueSeqNames} from "./MapFunctions"; 
 import SeqRead from "./SeqRead"
 
@@ -14,12 +14,10 @@ import SeqRead from "./SeqRead"
 class Main extends Component {
     constructor() {
         super();
-
         this.state = { seqFiletext: '', sequenceData: [], locusArray: [], locusCounts: [], uniqSeqNames: [] };
-        
         this.readFile = this.readFile.bind(this);
     }
-
+    // callback function handles file read. Passed to Sequences then to GetSeqFile
     readFile(currentText) {
         let parseResult;
         this.setState(()=>({seqFiletext: currentText }));
@@ -42,7 +40,6 @@ class Main extends Component {
     }
     
     render() {
-
         return (
             <HashRouter>
               <div>
@@ -52,7 +49,7 @@ class Main extends Component {
                   <li><NavLink to="/MapFile">Create Map File</NavLink></li>
                 </ul>
                 <div className="content">
-            <Route exact path="/" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
+                  <Route exact path="/" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
                   <Route path="/Mapfile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} uniqSeqNames={this.state.uniqSeqNames}  /> } />
                 </div>
               </div>
