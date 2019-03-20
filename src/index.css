@@ -1,0 +1,56 @@
+body {
+    background-color: #556930;
+    padding: 20px;
+    margin: 0;
+}
+
+h1 {
+    font-family: 'Satisfy', cursive;
+}
+
+
+h2, p, ul, li {
+    font-family: 'Oswald',sans-serif;
+}
+
+h3, p, ul, li {
+    font-family: 'Oswald',sans-serif;
+}
+
+ul.header li {
+    display: inline;
+    list-style-type: none;
+    margin: 0;
+}
+ul.header {
+    background-color: #465728;
+    padding: 0;
+    width: 860px;
+}
+
+ul.header li a {
+    color: white;
+    font-weight: bold;
+    text-decoration:none;
+    padding: 10px;
+    display: inline-block;
+}
+
+.content {
+    background-color:  #556930;
+    padding: 10px;
+}
+
+.content h2 {
+    padding: 0;
+    margin: 0;
+}
+
+.content li {
+    margin-bottom: 10px;
+    background-color: 
+}
+
+.active {
+    background-color:#384620;
+}

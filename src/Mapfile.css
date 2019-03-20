@@ -1,0 +1,130 @@
+.mapfile-box {
+    background-color: #465728;
+    padding:20px;
+    color: white;
+    border-radius: 5px;
+    width: 800px;
+    height: 500px;
+}
+
+
+
+.col1 {
+    width: 320px;
+    height: 26px;
+    padding: 5px;
+    border: 2px solid #556B2F;
+    background-color: #556B2F;
+    flex: 4 200px;
+    border-radius:5px;
+}
+
+.col1 input {
+    width: 120px;
+    padding: 2px;
+}
+
+.col1 form {
+    padding: 3px;
+}
+
+.title
+{
+    height: 40px;
+    width:250px;
+    padding:5px;
+}
+
+.smallButton {
+    background-color: #384620;
+    border: 3px solid #384620;
+    color: white;
+}
+
+
+.flex-box
+{
+    flex-grow: 1;
+}
+
+.map-box {
+    width: 320px;
+    height: 220px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 0px;
+    padding-left: 0px;
+    border: 0px;
+    flex: 200px;
+}
+
+dl {
+    color: #333;
+    background-color: 	#556B2F;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: 'B612 Mono', monospace;
+    color: white;
+    font-size: 11px;
+    width: 315px; 
+
+}
+
+.map-box ul {
+    list-style: none;
+    padding-left: 0;
+    width: 320px;
+}
+
+.col2 {
+    align-text: center;
+    width: 150px;
+    height: 40px;
+    padding: 0px;
+    background-color:   #465728;  
+    flex: 1 100px;
+}
+
+.col3 {
+    align-text: center;
+    width: 250px;
+    height: 280px;
+    padding: 5px;
+    background-color:   #465728;  
+    flex: 2 100px;
+}
+
+.text-unmapped {
+   resize: none;
+   padding: 10px;
+   width: 130px;
+   height: 300px;
+   border: 2px solid  #465728;
+   font-family: 'B612 Mono', monospace;
+   font-size: 12px;
+   background-color:  #465728;
+   line-height: 1;
+   color: white;
+   flex: 100px;
+}
+
+.text-mapped {
+    resize: none;
+    padding: 10px;
+    width: 235px;
+    height: 300px;
+    border: 2px solid #465728;
+    font-size: 12px;
+    background-color: #465728;
+    line-height: 1;
+    font-family: 'B612 Mono', monospace;
+    color: white;
+    flex: 100px;
+}
+
+.quick-start p {
+    font-family: 'PT Sans', sans-serif;
+    font-size:16px;
+    color: black;
+    width: 850px;
+}

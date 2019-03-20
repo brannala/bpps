@@ -1,0 +1,115 @@
+
+h1 {
+    font-family: 'Satisfy', cursive;
+}
+
+
+h2, p, ul, li {
+    font-family: 'Oswald',sans-serif;
+}
+
+h3, p, ul, li {
+    font-family: 'Oswald',sans-serif;
+}
+
+
+.counts
+{
+    padding:16px;
+    font-family: 'Oswald',sans-serif;  
+}
+
+
+.countbox
+{
+    width: 600px;
+    text-align: center;
+list-style-type: none;
+  margin: 10px;
+  padding: 16px;
+  overflow: hidden;
+  background-color: blue;
+
+}
+
+.quick-start p {
+    font-family: 'PT Sans', sans-serif;
+    font-size:16px;
+    color: black;
+    width: 850px;
+}
+
+.countbox li {
+  float: left;
+}
+
+countbox li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 16px;
+  text-decoration: none;
+}
+
+
+
+.seq-box {
+   resize: none;
+   width: 700px;
+   height: 300px;
+   border: 3px solid #38471f;
+   font-family: 'B612 Mono', monospace;
+   border-radius: 5px;
+   font-size: 12px;
+   background-color: #38471f;
+   line-height: 1;
+   color: white;
+   padding:5px;
+}
+
+.seqview button {
+    padding: 0px;
+    margin: 5px;
+    font-size: 18px;
+    background-color: #384620;
+    width: 30px;	
+    height: 30px;
+    color: #FFF;
+    border: 2px solid #384620;
+    text-align: center;
+    border-radius: 100%;
+
+}
+
+.seqview button:hover {
+    background-color: #2a3418;
+    border: 2px solid #2a3418;
+    
+}
+
+.seqview button:active {
+    background-color: black;
+    border: 2px solid black;
+  /*  border-radius: 100%; */
+}
+
+.seqview button:focus {
+    outline: 0;
+}
+
+.seqview {
+    border-radius: 5px;
+    padding: 20px;
+    color: white;
+    background-color: #465728;
+    width: 800px;
+}
+
+
+.seqview2 {
+    border-radius: 5px;
+    padding: 20px;
+    color: white;
+    background-color: #465728;
+    width: 700px;
+}
