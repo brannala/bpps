@@ -52,10 +52,7 @@ class MapFile extends Component {
 
             if((seqMc.matchedSeqs.length>0)&&(seqMc.unmatchedSeqs.length===0))
                 this.setState({ mapDone: true}); 
-        
-
         }
-        
         this._spNameInput.value = "";
         this._regExpInput.value = "";
     }
