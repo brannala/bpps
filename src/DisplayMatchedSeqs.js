@@ -10,7 +10,6 @@ class DisplayMatchedSeqs extends Component {
     getMatchedAsString()
     {
         let matched = "";
-        console.log(this.props.seqMatches.matchedSeqs);
         if(this.props.seqMatches.matchedSeqs.length>0)
         {
             for(let i=0; i < this.props.seqMatches.matchedSeqs.length; i++)

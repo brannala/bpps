@@ -41,6 +41,18 @@
     color: white;
 }
 
+.downloadFile {
+    padding: 10px;
+    color: #FFCC00;
+}
+
+.downButton {
+   background-color: #384620;
+    border: 3px solid #384620;
+    color: white;
+}
+
+
 
 .flex-box
 {

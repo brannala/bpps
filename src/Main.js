@@ -7,8 +7,8 @@ import {
 import Sequences from "./Sequences";
 import MapFile from "./MapFile";
 import FormatSeqs, {formatSeqs, getCounts} from "./FormatSeqs";
-import SeqRead from "./SeqRead"
-
+import SeqRead from "./SeqRead";
+import CtrlFile from "./CtrlFile";
 
 class Main extends Component {
     constructor() {
@@ -42,12 +42,14 @@ class Main extends Component {
               <div>
                 <h1>Minimalist bpp</h1>
                 <ul className="header">
-                  <li><NavLink to="/">Upload Sequences</NavLink></li>
+                  <li><NavLink to="/SeqFile">Upload Sequences</NavLink></li>
                   <li><NavLink to="/MapFile">Create Map File</NavLink></li>
+		  <li><NavLink to="/CtrlFile">Create Control File</NavLink></li>
                 </ul>
                 <div className="content">
-                  <Route exact path="/" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
-                  <Route path="/Mapfile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} /> } />
+                  <Route exact path="/SeqFile" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
+                  <Route path="/MapFile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} /> } />
+                  <Route path="/CtrlFile" render={(props) => <CtrlFile {...props} sequenceData={this.state.sequenceData} /> } />
                 </div>
               </div>
             </HashRouter>              

@@ -33,5 +33,27 @@ function seqToSpecName(uniqueNames,regExp_SpName)
     }
     return { matchedSeqs: sqToSN, unmatchedSeqs: unmatched };
 }
+// returns a formatted string for creating map file
+function createMapFileText(seqMatches)
+{
+    let mapFileText = "";
+    let rExp = new RegExp('.*\^.+');
+    try{
+	if(seqMatches.matchedSeqs.length>0)
+	{
+	    for(let i in seqMatches.matchedSeqs)
+		for(let j in seqMatches.matchedSeqs[i].seqNames)
+	    {
+		if(seqMatches.matchedSeqs[i].seqNames[j].match(rExp)===null)
+		    throw new Error("sequence labels must be of format IDName^SpecimenName. Sequence name was missing ^ !"); 
+		mapFileText += seqMatches.matchedSeqs[i].seqNames[j].substr(seqMatches.matchedSeqs[i].seqNames[j].indexOf('^')+1,) + "  " +
+		    seqMatches.matchedSeqs[i].spName + "\n"; 
+	    }
+	}
+    }
+    catch(err) { alert(err); }
+    return mapFileText;
+}
 
-export { uniqueSeqNames, seqToSpecName }
+
+export { uniqueSeqNames, seqToSpecName, createMapFileText }

@@ -1,20 +1,33 @@
 import React, { Component } from "react";
-import MapFunctions, { uniqueSeqNames, seqToSpecName } from "./MapFunctions";
+import MapFunctions, { uniqueSeqNames, seqToSpecName, createMapFileText } from "./MapFunctions";
 import { Columns, Column } from 'react-flex-columns';
 import "./Mapfile.css";
 import DisplayMatchedSeqs from "./DisplayMatchedSeqs";
 import DisplayUnmatchedSeqs from "./DisplayUnmatchedSeqs";
 import DisplayFilters from "./DisplayFilters";
-
-
+// import DownLoadFile from "./DownLoadFile";
+var FileSaver = require('file-saver');
 
 function MapIsDone(props)
 {
     const isDone = props.mapDone;
     if(props.mapDone)
-        return (<p>Hello World!</p>);
+    {
+	let text = createMapFileText(props.seqMatches);
+	var blob = new Blob([text],{type: "text/plain;charset=utf-8"});
+	let downloadClick = (e) => { FileSaver.saveAs(blob,"mapfile.txt"); }
+	return (
+	    <div className="downloadFile">
+	      <label>Map file is ready for download: </label><button className="downButton" onClick={downloadClick}>Download</button>
+	    </div>
+	);
+    }
     else
-        return (<p></p>);
+        return (
+	    <div className="downloadFile">
+	      <p>Sequence names must be completely filtered before map file can be downloaded.</p>	      
+	    </div>
+	);
 }
 
 class MapFile extends Component {
@@ -86,7 +99,7 @@ class MapFile extends Component {
                 </Columns>
               </div>
               <div>
-                <MapIsDone mapDone={this.state.mapDone}/>
+                <MapIsDone mapDone={this.state.mapDone} seqMatches={this.state.seqMatches}/>
               </div>
               <div className="quick-start"><p>Quick start: Enter species name in left box (e.g., Homo_sapiens)
                                              and a regular expression (RegExp) in right box to filter sequences. For example,
