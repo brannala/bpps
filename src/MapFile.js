@@ -6,37 +6,61 @@ import DisplayMatchedSeqs from "./DisplayMatchedSeqs";
 import DisplayUnmatchedSeqs from "./DisplayUnmatchedSeqs";
 import DisplayFilters from "./DisplayFilters";
 
+
+
+function MapIsDone(props)
+{
+    const isDone = props.mapDone;
+    if(props.mapDone)
+        return (<p>Hello World!</p>);
+    else
+        return (<p></p>);
+}
+
 class MapFile extends Component {
     constructor(props) {
         super(props);
-        this.state = { seqMatches: {unmatchedSeqs: [], matchedSeqs: []}, regExp_SpName: [], filters: [{text: "Homo_sapiens + /.*(HSap).*/", key: 666}] };
-
+        this.state = { seqMatches: {matchedSeqs: [],  unmatchedSeqs: uniqueSeqNames(this.props.sequenceData)},
+                       uniqSeqs: uniqueSeqNames(this.props.sequenceData), regExp_SpName: [], filters: [], mapDone: false };
         this.addFilter = this.addFilter.bind(this);
-    }
 
-    componentDidMount(){
-        this.setState(()=>({seqMatches: {matchedSeqs: [],  unmatchedSeqs: this.props.uniqSeqNames}}));
     }
+    
     // adds a new filter (filter = "species + regex" for display, regExp_SpName for filtering) and updates seqMatches object with new filter added
     addFilter(e) {
-        let filterArray = this.state.filters;
+        
         const regExp_SpN = this.state.regExp_SpName;
-        let rExp, seqMc = { matchedSeqs: [], unmatchedSeqs: this.state.seqMatches.unmatchedSeqs };
-        if((this._spNameInput.value !== "")&&(this._regExpInput.value !== "")) {
+        let rExp, seqMc = this.state.seqMatches, filterArray = this.state.filters;
+        const uniq = [];
+        for(let i in this.state.uniqSeqs)
+            uniq.push(this.state.uniqSeqs[i]);
+        
+        if((this._spNameInput.value !== "")&&(this._regExpInput.value !== ""))
+        {
             filterArray.unshift({ text: this._spNameInput.value + " + " + this._regExpInput.value, key: Date.now()});
-            //need to add code to check RegExp validity and add  / /
-            rExp = new RegExp(this._regExpInput.value);
-            regExp_SpN.push({ reg_exp: rExp, spName: this._spNameInput.value });
-            seqMc.matchedSeqs = seqToSpecName(this.state.seqMatches.unmatchedSeqs,regExp_SpN);
-            this.setState({ filters: filterArray });
-            this.setState({ regExp_SpNames: regExp_SpN });
-            this.setState({ seqMatches: seqMc });
-            e.preventDefault();
+            try
+            {
+                rExp = new RegExp(this._regExpInput.value);
+                regExp_SpN.push({ reg_exp: rExp, spName: this._spNameInput.value });
+                seqMc = seqToSpecName(uniq,regExp_SpN);
+                this.setState({ filters: filterArray });
+                this.setState({ regExp_SpNames: regExp_SpN });
+                this.setState({ seqMatches: seqMc });
+                    e.preventDefault();
+            }
+            catch(e) { alert(`warning! invalid regular expression syntax: ${this._regExpInput.value}`); }                               
+
+            if((seqMc.matchedSeqs.length>0)&&(seqMc.unmatchedSeqs.length===0))
+                this.setState({ mapDone: true}); 
+        
+
         }
+        
         this._spNameInput.value = "";
         this._regExpInput.value = "";
     }
 
+    
     render() {
         return (
             <div>
@@ -63,6 +87,9 @@ class MapFile extends Component {
                     <DisplayMatchedSeqs seqMatches={this.state.seqMatches}/>
                   </Column>
                 </Columns>
+              </div>
+              <div>
+                <MapIsDone mapDone={this.state.mapDone}/>
               </div>
               <div className="quick-start"><p>Quick start: Enter species name in left box (e.g., Homo_sapiens)
                                              and a regular expression (RegExp) in right box to filter sequences. For example,

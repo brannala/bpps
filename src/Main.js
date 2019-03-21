@@ -14,7 +14,7 @@ import SeqRead from "./SeqRead"
 class Main extends Component {
     constructor() {
         super();
-        this.state = { seqFiletext: '', sequenceData: [], locusArray: [], locusCounts: [], uniqSeqNames: [] };
+        this.state = { seqFiletext: '', sequenceData: [], locusArray: [], locusCounts: [] /* , uniqSeqNames: [] */ };
         this.readFile = this.readFile.bind(this);
     }
     // callback function handles file read. Passed to Sequences then to GetSeqFile
@@ -27,7 +27,7 @@ class Main extends Component {
             this.setState(()=>({sequenceData: parseResult.sequenceData }));
             this.setState(()=>({locusArray: formatSeqs(this.state.sequenceData) }));
             this.setState(()=>({locusCounts: getCounts(this.state.sequenceData) }));
-            this.setState(()=>({uniqSeqNames: uniqueSeqNames(this.state.sequenceData) })); 
+//            this.setState(()=>({uniqSeqNames: uniqueSeqNames(this.state.sequenceData) })); 
         }
         else // input file parsing errors. Empty data and display error message.
         {
@@ -35,7 +35,7 @@ class Main extends Component {
             this.setState(()=>({sequenceData: [] }));
             this.setState(()=>({locusArray: [" "] }));
             this.setState(()=>({locusCounts: [] }));
-            this.setState(()=>({uniqSeqNames: [] }));
+  //          this.setState(()=>({uniqSeqNames: [] }));
         }
     }
     
@@ -50,7 +50,7 @@ class Main extends Component {
                 </ul>
                 <div className="content">
                   <Route exact path="/" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
-                  <Route path="/Mapfile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} uniqSeqNames={this.state.uniqSeqNames}  /> } />
+                  <Route path="/Mapfile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} /> } />
                 </div>
               </div>
             </HashRouter>              
