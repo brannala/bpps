@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Columns, Column } from 'react-flex-columns';
 import "./CtrlFile.css";
-import CtrlFunc, { pairwiseDistance } from "./CtrlFunc";
+import CtrlFunc, { ParseMapText, pairwiseDistance } from "./CtrlFunc";
+import GetFile from "./GetFile";
 var FileSaver = require('file-saver');
 
 
@@ -11,9 +12,7 @@ function MapFileUpload(props) {
             return (
                 <div>
                 <p>Sequence Data Ready!</p>
-                  <p>p2D is { pairwiseDistance(props.sequenceData[0].sequences[0].seq,
-                                               props.sequenceData[0].sequences[10].seq)
-                            } </p>
+                  <GetFile readFile={props.readFile} fileType={"map"}/>
                 </div>
             );
         }
@@ -25,14 +24,17 @@ function MapFileUpload(props) {
         }
     }
     
-        
-
-
-
 class CtrlFile extends Component {
     constructor(props) {
         super(props);
         this.state = { mapData: [] };
+        this.handleMapFileRead = this.handleMapFileRead.bind(this);
+    }
+
+    handleMapFileRead(fileContents)
+    {
+        console.log(ParseMapText(fileContents));
+  //     this.SetState({ mapData: parseMapText(fileContents) })
         
     }
 
@@ -44,7 +46,7 @@ class CtrlFile extends Component {
                 <p>Create a control file in bpp format. We will use the sequence data you uploaded to choose sensible defaults</p>
                 <Columns gutters stackMaxWidth={700}>
                   <Column size={20}>
-	            <MapFileUpload sequenceData={this.props.sequenceData}/>
+	            <MapFileUpload sequenceData={this.props.sequenceData} readFile={this.handleMapFileRead} />
                   </Column>
                   <Column siz={20}>
 		    <p>placeholder</p>

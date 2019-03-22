@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-class GetSeqFile extends React.Component {
+class GetFile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -37,12 +37,12 @@ class GetSeqFile extends React.Component {
         // Uploads will push to the file input's `.files` array. Get the last uploaded file.
         const latestUploadedFile = fileList.item(fileList.length - 1);
         try {
-            const fileContents = await GetSeqFile.readUploadedFileAsText(latestUploadedFile);
+            const fileContents = await GetFile.readUploadedFileAsText(latestUploadedFile);
             this.setState({
                 uploadedFileContents: fileContents,
                 waitingForFileUpload: false });
             this.props.readFile(fileContents);
-            if(this.props.initPosInLocusArray!=="undefined")
+            if(this.props.fileType === "sequence")
                 this.props.initPosInLocusArray();
         } catch (e) {
             console.log(e);
@@ -66,4 +66,4 @@ class GetSeqFile extends React.Component {
     }
 }
 
-export default GetSeqFile;
+export default GetFile;

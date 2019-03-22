@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import './DisplaySeqs.css';
 import DisplaySeqs from "./DisplaySeqs";
-import GetSeqFile from "./GetSeqFile";
+import GetFile from "./GetFile";
 
 class Sequences extends Component {
     constructor(props) {
@@ -36,7 +36,7 @@ class Sequences extends Component {
               <div className="seqview">
                 <h2>Step 1:</h2>
                 <p>Upload a file containing DNA sequences in bpp format.</p>
-                <GetSeqFile readFile={this.props.readFile} initPosInLocusArray={this.initPosInLocusArray}/>
+                <GetFile readFile={this.props.readFile} initPosInLocusArray={this.initPosInLocusArray} fileType={"sequence"}/>
                 <DisplaySeqs locusText={this.props.locusArray[this.state.posInLocusArray]} />
                 <div><button onClick={this.handleScanClickDown}> - </button>                                                           
                   <button onClick={this.handleScanClickUp}> + </button>                                                         
