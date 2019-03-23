@@ -35,10 +35,19 @@ class MapFile {
 	UI: form_input form_input button(add)		
 }
 
-class GetSeqFile {
+class CtrlFile {
+	state: mapData
+	..
+	props: ReadFile()
+	==
+	MapFileUpload() handleMapFileRead()
+	}
+
+
+class GetFile {
 	state: uploadedFileContents waitingForFileUpload
 	..
-	props: initPosInLocusArray() readFile()
+	props: initPosInLocusArray() ReadFile() fileType
 	..
 	UI: input "file"		
 		}
@@ -91,16 +100,23 @@ class MapFunctions {
 	==
 	uniqueSeqNames() seqToSpecName()
 }	
-	
+
+class CtrlFunc {
+	==
+	ParseMapText() pairwiseDistance()
+}
+					
 Main ---+ Sequences : locusArray \n locusCounts \n ReadFile()
-Main ---|> MapFile : sequenceData \n uniqSeqNames
-Sequences ---+ GetSeqFile : initPosInLocusArray() \n ReadFile()
+Main ---|> MapFile : sequenceData 
+Main ---|> CtrlFile : sequenceData
+Sequences ---+ GetFile : initPosInLocusArray() \n ReadFile() \n fileType
 Sequences --|> DisplaySeqs : locusText
 MapFile --|> DisplayUnmatchedSeqs : seqMatches
 MapFile --|> DisplayMatchedSeqs : seqMatches
 MapFile --|> DisplayFilters : filters	
 SeqRead ..> Main : SeqRead()
 FormatSeqs ..> Main : formatSeqs() \n getCounts()
-MapFunctions ..> Main : uniqueSeqNames()
-MapFunctions ..> MapFile : seqToSpecName()		
+CtrlFile ---+ GetFile: handleMapFileRead \n fileType
+MapFunctions ..> MapFile : seqToSpecName() \n uniqSeqNames
+CtrlFunc ..> CtrlFile : ParseMapText()					
 @enduml

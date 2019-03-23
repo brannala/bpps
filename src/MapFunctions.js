@@ -38,18 +38,31 @@ function createMapFileText(seqMatches)
 {
     let mapFileText = "";
     let rExp = new RegExp('.*\^.+');
+    let mapData = [];
     try{
 	if(seqMatches.matchedSeqs.length>0)
 	{
 	    for(let i in seqMatches.matchedSeqs)
 		for(let j in seqMatches.matchedSeqs[i].seqNames)
-	    {
-		if(seqMatches.matchedSeqs[i].seqNames[j].match(rExp)===null)
-		    throw new Error("sequence labels must be of format IDName^SpecimenName. Sequence name was missing ^ !"); 
-		mapFileText += seqMatches.matchedSeqs[i].seqNames[j].substr(seqMatches.matchedSeqs[i].seqNames[j].indexOf('^')+1,) + "  " +
-		    seqMatches.matchedSeqs[i].spName + "\n"; 
-	    }
-	}
+		    if(seqMatches.matchedSeqs[i].seqNames[j].match(rExp)===null)
+		        throw new Error("sequence labels must be of format IDName^SpecimenName. Sequence name was missing ^ !"); 
+            
+            // get mapData as spName +  specimen IDs
+	    for(let i in seqMatches.matchedSeqs)
+            {
+                let specimenID = [];
+                for(let j in seqMatches.matchedSeqs[i].seqNames)
+                    specimenID.push(seqMatches.matchedSeqs[i].seqNames[j].substr(seqMatches.matchedSeqs[i].seqNames[j].indexOf('^')+1,));
+                
+                specimenID = [...new Set(specimenID)];
+                mapData.push({specimen: specimenID, spName: seqMatches.matchedSeqs[i].spName});
+            }
+            console.log(mapData[0].specimen[2]);
+            for(let i in mapData)
+                for(let j in mapData[i].specimen)
+		    mapFileText += mapData[i].specimen[j] + "  " + mapData[i].spName + "\n";
+            console.log(mapFileText);
+        }
     }
     catch(err) { alert(err); }
     return mapFileText;

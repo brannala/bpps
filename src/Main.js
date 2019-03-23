@@ -13,11 +13,11 @@ import CtrlFile from "./CtrlFile";
 class Main extends Component {
     constructor() {
         super();
-        this.state = { seqFiletext: '', sequenceData: [], locusArray: [], locusCounts: [] };
+        this.state = { seqFiletext: '', sequenceData: [], locusArray: [], locusCounts: [], seqFileName: '' };
         this.readFile = this.readFile.bind(this);
     }
     // callback function handles file read. Passed to Sequences then to GetSeqFile
-    readFile(currentText) {
+    readFile(currentText,fileName) {
         let parseResult;
         this.setState(()=>({seqFiletext: currentText }));
         parseResult = SeqRead(currentText);
@@ -26,6 +26,7 @@ class Main extends Component {
             this.setState(()=>({sequenceData: parseResult.sequenceData }));
             this.setState(()=>({locusArray: formatSeqs(this.state.sequenceData) }));
             this.setState(()=>({locusCounts: getCounts(this.state.sequenceData) }));
+            this.setState(()=>({seqFileName: fileName }));
         }
         else // input file parsing errors. Empty data and display error message.
         {
@@ -49,7 +50,7 @@ class Main extends Component {
                 <div className="content">
                   <Route exact path="/SeqFile" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
                   <Route path="/MapFile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} /> } />
-                  <Route path="/CtrlFile" render={(props) => <CtrlFile {...props} sequenceData={this.state.sequenceData} /> } />
+                  <Route path="/CtrlFile" render={(props) => <CtrlFile {...props} sequenceData={this.state.sequenceData} seqFileName={this.state.seqFileName}/> } />
                 </div>
               </div>
             </HashRouter>              

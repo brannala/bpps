@@ -1,40 +1,25 @@
 import React, { Component } from "react";
 import { Columns, Column } from 'react-flex-columns';
 import "./CtrlFile.css";
-import CtrlFunc, { ParseMapText, pairwiseDistance } from "./CtrlFunc";
+import CtrlFunc, { ParseMapText, MapFileUpload, pairwiseDistance } from "./CtrlFunc";
+import CreateControlFile from "./CreateControlFile";
 import GetFile from "./GetFile";
 var FileSaver = require('file-saver');
 
 
-function MapFileUpload(props) {
-        if(props.sequenceData.length > 0)
-        {
-            return (
-                <div>
-                <p>Sequence Data Ready!</p>
-                  <GetFile readFile={props.readFile} fileType={"map"}/>
-                </div>
-            );
-        }
-        else
-        {
-            return (
-                <p>Go to step 1 and upload sequence data to begin.</p>
-            );
-        }
-    }
     
 class CtrlFile extends Component {
     constructor(props) {
         super(props);
-        this.state = { mapData: [] };
+        this.state = { mapData: [], mapFileName: '' };
         this.handleMapFileRead = this.handleMapFileRead.bind(this);
     }
 
-    handleMapFileRead(fileContents)
+    handleMapFileRead(fileContents,fileName)
     {
         console.log(ParseMapText(fileContents));
-  //     this.SetState({ mapData: parseMapText(fileContents) })
+        this.setState({ mapData: ParseMapText(fileContents) });
+        this.setState({ mapFileName: fileName });
         
     }
 
@@ -47,6 +32,8 @@ class CtrlFile extends Component {
                 <Columns gutters stackMaxWidth={700}>
                   <Column size={20}>
 	            <MapFileUpload sequenceData={this.props.sequenceData} readFile={this.handleMapFileRead} />
+                    <CreateControlFile sequenceData={this.props.sequenceData} mapData={this.state.mapData} seqFileName={this.props.seqFileName}
+                                       mapFileName={this.state.mapFileName}></CreateControlFile>
                   </Column>
                   <Column siz={20}>
 		    <p>placeholder</p>
@@ -56,7 +43,8 @@ class CtrlFile extends Component {
               <div>
 
               </div>
-              <div className="quick-start"><p>Quick start: If step 1 is complete a link will appear above to upload a map file. Upload the mapfile created in step 2 (or another mapfile conforming with the sequence data uploaded in step 1.</p></div>
+              <div className="quick-start"><p>Quick start: If step 1 is complete a link will appear above to upload a map file. Upload the mapfile
+                                             created in step 2 (or another mapfile conforming with the sequence data uploaded in step 1.</p></div>
             </div>
         );
     }

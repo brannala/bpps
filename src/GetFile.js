@@ -41,7 +41,7 @@ class GetFile extends React.Component {
             this.setState({
                 uploadedFileContents: fileContents,
                 waitingForFileUpload: false });
-            this.props.readFile(fileContents);
+            this.props.readFile(fileContents,fileList[0].name);
             if(this.props.fileType === "sequence")
                 this.props.initPosInLocusArray();
         } catch (e) {

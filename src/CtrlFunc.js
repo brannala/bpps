@@ -1,3 +1,24 @@
+import React from "react"
+import GetFile from "./GetFile"
+
+function MapFileUpload(props) {
+    if(props.sequenceData.length > 0)
+    {
+        return (
+            <div>
+              <p>Sequence data processing successful!</p>
+              <p>Upload a map file to continue</p>
+              <GetFile readFile={props.readFile} fileType={"map"}/>
+            </div>
+        );
+    }
+    else
+    {
+        return (
+            <p>Go to step 1 and upload sequence data to begin.</p>
+        );
+    }
+}
 
 function ParseMapText(text)
 {
@@ -19,9 +40,9 @@ function ParseMapText(text)
         }
         else
             throw new Error("Empty map file!");
-        return mapData;
+    return mapData;
     }
-    catch(err){ alert(`Error: ${err.message}`); } 
+    catch(err){ alert(`Error: ${err.message}`); return [];} 
 
 };
 
@@ -35,17 +56,20 @@ const pairwiseDistance = (seq1,seq2) =>
     return p2Dist/seq1.length;
 };
 
+function getSpeciesList(mapData)
+{
+    const spNameList = [];
+    for(let i in mapData)
+        spNameList.push(mapData[i].spName);
+    const UniquespNameList = [...new Set(spNameList)];
+    return UniquespNameList;
+}
+
 function getPriorMeans(sequenceData,mapData, p2D)
 {
     
 
-
-
-
 }
 
 
-
-
-
-export { ParseMapText, pairwiseDistance }
+export { ParseMapText, MapFileUpload, getSpeciesList, pairwiseDistance }
