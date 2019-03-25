@@ -13,9 +13,14 @@ function MapIsDone(props)
     const isDone = props.mapDone;
     if(props.mapDone)
     {
+        let mapFileName = props.seqFileName.substr(0,props.seqFileName.indexOf('.'));
+        if(mapFileName==="")
+            mapFileName = props.seqFileName + "map.txt";
+        else
+            mapFileName = mapFileName + "map.txt";
 	let text = createMapFileText(props.seqMatches);
 	var blob = new Blob([text],{type: "text/plain;charset=utf-8"});
-	let downloadClick = (e) => { FileSaver.saveAs(blob,"mapfile.txt"); }
+	let downloadClick = (e) => { FileSaver.saveAs(blob,mapFileName); }
 	return (
 	    <div className="downloadFile">
 	      <label>Map file is ready for download: </label><button className="downButton" onClick={downloadClick}>Download</button>
@@ -99,7 +104,7 @@ class MapFile extends Component {
                 </Columns>
               </div>
               <div>
-                <MapIsDone mapDone={this.state.mapDone} seqMatches={this.state.seqMatches}/>
+                <MapIsDone mapDone={this.state.mapDone} seqMatches={this.state.seqMatches} seqFileName={this.props.seqFileName}/>
               </div>
               <div className="quick-start"><p>Quick start: Enter species name in left box (e.g., Homo_sapiens)
                                              and a regular expression (RegExp) in right box to filter sequences. For example,

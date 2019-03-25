@@ -1,0 +1,12 @@
+    seed = -1 
+    seqfile = bearsseqs.txt 
+    Imapfile = bearseqsMap.txt 
+    outfile = out.txt 
+    mcmcfile = mcmc.txt 
+
+    speciesdelimitation = 0
+    speciestree = 1
+    species&tree = 8  Ame  Tor  HMAL  MURL  UTHL  Uam  Uar  Uma  
+                    ((((Ame, Tor), ((HMAL, MURL), UTHL)), Uam), (Uar, Uma)); 
+    diploid 1 1 1 1 1 1 1 1 
+    nloci = 14 

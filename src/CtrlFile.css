@@ -7,7 +7,52 @@
     height: 500px;
 }
 
+.ctrlFileBox {
+    width: 450px;
+    height: 300px;
+    font-family: 'B612 Mono', monospace;
+    border-radius: 5px;
+    border-color: #38471f;
+    font-size: 12px;
+    background-color: #38471f;
+    line-height: 1;
+    color: white;
+    padding:5px;
+    resize: none;
 
+}
+
+.options-box
+{
+    border-radius:5x;
+    padding: 14px;
+    background-color: #38471f;
+}
+
+.options-box label
+{
+    padding: 6px;
+}
+
+.options-box span {
+    padding: 8px;
+}
+
+.burninField
+{
+    width:70px;
+    padding: 2px;
+}
+
+.sFreqField {
+    width: 50px;
+    padding: 2px;
+}
+
+.mcmcField {
+    width:100px;
+    padding:2px;
+}
 
 .col1 {
     width: 320px;
@@ -46,11 +91,21 @@
     color: #FFCC00;
 }
 
+.downloadFile label {
+    padding-top: 2i0px;
+}
+
 .downButton {
+    padding: 4px;
    background-color: #384620;
     border: 3px solid #384620;
     color: white;
 }
+
+.downLoadButton {
+    padding: 30px;
+}
+
 
 
 

@@ -49,7 +49,7 @@ class Main extends Component {
                 </ul>
                 <div className="content">
                   <Route exact path="/SeqFile" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
-                  <Route path="/MapFile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} /> } />
+                  <Route path="/MapFile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} seqFileName={this.state.seqFileName}/> } />
                   <Route path="/CtrlFile" render={(props) => <CtrlFile {...props} sequenceData={this.state.sequenceData} seqFileName={this.state.seqFileName}/> } />
                 </div>
               </div>

@@ -10,10 +10,10 @@ function SeqRead(input) {
     const errorResult = (err) => { return { sequenceData: [], error: `error: unexpected input: ${err}` }; };
     // check for correct number of sites in each sequence 
     function checkSequences(sData) {
-        for(let i=0; i< sData.length; i++)
-            for(let j in sData[i].sequences)
-                if(Number(sData[i].nosites) !== sData[i].sequences[j].seq.length)
-                    return {error: true, error_message: `expected ${sData[i].nosites} sites in sequence ${Number(j)+1} at locus ${i+1} but observed ${sData[i].sequences[j].seq.length} sites`}; 
+        for(let loci of sData)
+            for(let seqs of loci.sequences)
+                if(Number(loci.nosites) !== seqs.seq.length)
+                    return {error: true, error_message: `expected ${loci.nosites} sites in sequence ${seqs.seqname} but observed ${seqs.seq.length} sites`}; 
         return {error: false};
     };
     
