@@ -36,7 +36,8 @@ class MapFile {
 }
 
 class CtrlFile {
-	state: mapData
+	state: mapData mapFileName ctrlFileOpts
+	nTree seqBySpecies priors numberSeqs speciesList
 	..
 	props: ReadFile()
 	==
@@ -103,8 +104,38 @@ class MapFunctions {
 
 class CtrlFunc {
 	==
-	ParseMapText() pairwiseDistance()
+	ParseMapText() MapFileUpload() getSpeciesList()
 }
+
+					class CreateControlFile {
+						state:
+						..
+						props: mapData seqFileName mapFileName sequenceData \n speciesList ctrlFileOpts numberSeqs nTree priors
+						==
+						downloadClick() createControlFileText
+						..
+						UI: button textarea
+						}
+
+						class PriorFunc {
+							==
+							isSpName() getNumberSeqs() getSpecimen() \n getSeqBySpecies() pairwiseDistance()
+							siteMismatchProb() avgDistance() \n maxDistance() priorFromSeqs()
+							}
+							class Trees {
+								==
+								randomTree() newickFromTree()
+		}						
+
+								class CtrlFileOptions {
+									state:
+									..
+									props: mapData ctrlFileOpts handleSpecDelimCheckbox
+									handleSpecTreeInfCheckbox handleDiploidCheckbox
+									handleBurninSet handleSampleFreqSet
+									handleMcmcSamples
+									}
+								
 					
 Main ---+ Sequences : locusArray \n locusCounts \n ReadFile()
 Main ---|> MapFile : sequenceData 
@@ -118,5 +149,10 @@ SeqRead ..> Main : SeqRead()
 FormatSeqs ..> Main : formatSeqs() \n getCounts()
 CtrlFile ---+ GetFile: handleMapFileRead \n fileType
 MapFunctions ..> MapFile : seqToSpecName() \n uniqSeqNames
-CtrlFunc ..> CtrlFile : ParseMapText()					
+CtrlFunc ..> CtrlFile : ParseMapText()	\n MapFileUpload \n getSpeciesList				
+CtrlFile ---> CreateControlFile
+PriorFunc ..> CtrlFile
+Trees ..> CtrlFile : randomTree() \n newickFromTree()
+CtrlFile --|> CtrlFileOptions
+									
 @enduml

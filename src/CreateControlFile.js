@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import CtrlFunc, { getSpeciesList } from "./CtrlFunc";
-import PriorFunc, { getSeqBySpecies, avgDistance, maxDistance, priorFromSeqs } from "./PriorFunc";
-
 var FileSaver = require('file-saver');
 
 
@@ -9,8 +6,6 @@ function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesLi
 
     let controlFileText = "";
     let nloci = seqData.length;
-    
-
     
     controlFileText += "    seed = -1 \n";
     controlFileText += `    seqfile = ${seqFileName} \n`;
@@ -40,34 +35,16 @@ function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesLi
     controlFileText += `    burnin = ${ctrlFileOpts.burnin} \n`;
     controlFileText += `    sampfreq = ${ctrlFileOpts.sampleFreq} \n`;
     controlFileText += `    nsample = ${ctrlFileOpts.mcmcSamples} \n`;
-
-    //debugging
-
-
- //   let avgSp0 = [];
-//    for(let i in testSeq)
-  //      console.log(avgDistance(testSeq[i][0]));
-   //  console.log(maxDistance(testSeq));
-    //  avgSp0.push(avgDistance(testSeq[i][0]));
-        
-//    console.log(`priorTheta: ${.priorTheta.b} priorTau: ${priorFromSeqs(testSeq).priorTau.b}`);
-    
     return controlFileText;
 }
-
-
-
-
-
 
 
 class CreateControlFile extends Component {
 
 
-
     render() {
         let controlFileName = "";
-        console.log(this.props.mapData);
+//        console.log(this.props.mapData);
         if(this.props.mapData.size > 0)
         {
             let namePrefix = this.props.seqFileName.substr(0,this.props.seqFileName.indexOf('.'));

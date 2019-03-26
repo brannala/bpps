@@ -13,6 +13,20 @@ function getNumberSeqs(spName,mapData)
     return noSeqs;
 }
 
+function getMaxNumberSeqs(spName,sequenceData,mapData)
+{
+    let seqMaxCount = 0;
+    for(let locus of sequenceData)
+    {
+        let sequenceCount=0;
+        for(let sequences of locus.sequences)
+            if(isSpName(getSpecimen(sequences.seqname),spName,mapData))
+                sequenceCount++;
+        if(sequenceCount > seqMaxCount)
+            seqMaxCount = sequenceCount;
+    }
+    return seqMaxCount;
+}
 
 function getSpecimen(seqName)
 {
@@ -91,7 +105,7 @@ function maxDistance(sequences)
             allSeqs = allSeqs.concat(seqs);
         combinedSeqs.push(allSeqs);
     }
-    console.log(combinedSeqs);
+ //   console.log(combinedSeqs);
     for(let locus of combinedSeqs)
         for(let k=0; k < (locus.length - 1); k++)
             for(let j=k; j < locus.length; j++)
@@ -119,4 +133,4 @@ function priorFromSeqs(sequences)
 }
 
 
-export { getSeqBySpecies, pairwiseDistance, avgDistance, priorFromSeqs, maxDistance, getNumberSeqs }
+export { getSeqBySpecies, pairwiseDistance, avgDistance, priorFromSeqs, maxDistance, getNumberSeqs, getMaxNumberSeqs }

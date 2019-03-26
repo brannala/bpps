@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Columns, Column } from 'react-flex-columns';
 import "./CtrlFile.css";
 import CtrlFunc, { ParseMapText, MapFileUpload, getSpeciesList } from "./CtrlFunc";
-import PriorFunc, { getSeqBySpecies, avgDistance, maxDistance, priorFromSeqs, getNumberSeqs } from "./PriorFunc";
+import PriorFunc, { getSeqBySpecies, avgDistance, maxDistance, priorFromSeqs, getNumberSeqs, getMaxNumberSeqs } from "./PriorFunc";
 import CreateControlFile from "./CreateControlFile";
 import CtrlFileOptions from "./CtrlFileOptions";
 import GetFile from "./GetFile";
@@ -41,7 +41,7 @@ class CtrlFile extends Component {
         this.setState({ priors: priorFromSeqs(this.state.seqBySpecies) });
         let numSeqs ='';
         for(let i in this.state.speciesList)
-            numSeqs += `${getNumberSeqs(this.state.speciesList[i],this.state.mapData)}  `;
+          numSeqs += `${getMaxNumberSeqs(this.state.speciesList[i],this.props.sequenceData,this.state.mapData)}  `;
         this.setState({ numberSeqs: numSeqs });
         
     }
