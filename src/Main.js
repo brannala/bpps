@@ -43,12 +43,12 @@ class Main extends Component {
               <div>
                 <h1>Minimalist bpp</h1>
                 <ul className="header">
-                  <li><NavLink to="/SeqFile">Upload Sequences</NavLink></li>
+                  <li><NavLink to="/">Upload Sequences</NavLink></li>
                   <li><NavLink to="/MapFile">Create Map File</NavLink></li>
 		  <li><NavLink to="/CtrlFile">Create Control File</NavLink></li>
                 </ul>
                 <div className="content">
-                  <Route exact path="/SeqFile" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
+                  <Route exact path="/" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts}  /> } />
                   <Route path="/MapFile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} seqFileName={this.state.seqFileName}/> } />
                   <Route path="/CtrlFile" render={(props) => <CtrlFile {...props} sequenceData={this.state.sequenceData} seqFileName={this.state.seqFileName}/> } />
                 </div>
