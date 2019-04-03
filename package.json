@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "file-saver": "^2.0.1",
+    "npm": "^6.9.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-flex-columns": "^0.4.2",

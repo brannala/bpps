@@ -133,4 +133,4 @@ function priorFromSeqs(sequences)
 }
 
 
-export { getSeqBySpecies, pairwiseDistance, avgDistance, priorFromSeqs, maxDistance, getNumberSeqs, getMaxNumberSeqs }
+export { getSeqBySpecies, pairwiseDistance, avgDistance, priorFromSeqs, maxDistance, getMaxNumberSeqs }
