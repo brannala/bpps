@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import Sequences from "./Sequences";
 import MapFile from "./MapFile";
-import FormatSeqs, {formatSeqs, getCounts} from "./FormatSeqs";
+import {formatSeqs, getCounts} from "./FormatSeqs";
 import SeqRead from "./SeqRead";
 import CtrlFile from "./CtrlFile";
 

@@ -1,3 +1,111 @@
+let unphasedDistances = new Map();
+unphasedDistances.set('aa',0.0);
+unphasedDistances.set('ac',1.0);
+unphasedDistances.set('ag',1.0);
+unphasedDistances.set('at',1.0);
+unphasedDistances.set('cc',0.0);
+unphasedDistances.set('cg',1.0);
+unphasedDistances.set('ct',1.0);
+unphasedDistances.set('gg',0.0);
+unphasedDistances.set('gt',1.0);
+unphasedDistances.set('tt',0.0);
+unphasedDistances.set('ar',0.500);
+unphasedDistances.set('ay',1.0);
+unphasedDistances.set('as',1.0);
+unphasedDistances.set('aw',0.500);
+unphasedDistances.set('ak',1.0);
+unphasedDistances.set('am',0.500);
+unphasedDistances.set('ab',1.0);
+unphasedDistances.set('ad',0.333);
+unphasedDistances.set('ah',0.333);
+unphasedDistances.set('av',0.333);
+unphasedDistances.set('cr',1.0);
+unphasedDistances.set('cy',0.500);
+unphasedDistances.set('cs',0.500);
+unphasedDistances.set('cw',1.0);
+unphasedDistances.set('ck',1.0);
+unphasedDistances.set('cm',0.500);
+unphasedDistances.set('bc',0.333);
+unphasedDistances.set('cd',1.0);
+unphasedDistances.set('ch',0.333);
+unphasedDistances.set('cv',0.333);
+unphasedDistances.set('gr',0.500);
+unphasedDistances.set('gy',1.0);
+unphasedDistances.set('gs',0.500);
+unphasedDistances.set('gw',1.0);
+unphasedDistances.set('gk',0.500);
+unphasedDistances.set('gm',1.0);
+unphasedDistances.set('bg',0.333);
+unphasedDistances.set('dg',0.333);
+unphasedDistances.set('gh',1.0);
+unphasedDistances.set('gv',0.333);
+unphasedDistances.set('rt',1.0);
+unphasedDistances.set('ty',0.500);
+unphasedDistances.set('st',1.0);
+unphasedDistances.set('tw',0.500);
+unphasedDistances.set('kt',0.500);
+unphasedDistances.set('mt',1.0);
+unphasedDistances.set('bt',0.333);
+unphasedDistances.set('dt',0.333);
+unphasedDistances.set('ht',0.333);
+unphasedDistances.set('tv',1.0);
+unphasedDistances.set('rr',0.500);
+unphasedDistances.set('ry',1.0);
+unphasedDistances.set('rs',0.250);
+unphasedDistances.set('rw',0.250);
+unphasedDistances.set('kr',0.250);
+unphasedDistances.set('mr',0.250);
+unphasedDistances.set('br',0.167);
+unphasedDistances.set('dr',0.333);
+unphasedDistances.set('hr',0.250);
+unphasedDistances.set('rv',0.333);
+unphasedDistances.set('yy',0.500);
+unphasedDistances.set('sy',0.250);
+unphasedDistances.set('wy',0.250);
+unphasedDistances.set('ky',0.250);
+unphasedDistances.set('my',0.250);
+unphasedDistances.set('by',0.333);
+unphasedDistances.set('dy',0.167);
+unphasedDistances.set('hy',0.333);
+unphasedDistances.set('vy',0.167);
+unphasedDistances.set('ss',0.500);
+unphasedDistances.set('sw',1.0);
+unphasedDistances.set('ks',0.250);
+unphasedDistances.set('ms',0.250);
+unphasedDistances.set('bs',0.333);
+unphasedDistances.set('ds',0.167);
+unphasedDistances.set('hs',0.167);
+unphasedDistances.set('sv',0.333);
+unphasedDistances.set('ww',0.500);
+unphasedDistances.set('kw',0.250);
+unphasedDistances.set('mw',0.250);
+unphasedDistances.set('bw',0.167);
+unphasedDistances.set('dw',0.333);
+unphasedDistances.set('hw',0.333);
+unphasedDistances.set('vw',0.167);
+unphasedDistances.set('kk',0.500);
+unphasedDistances.set('km',1.0);
+unphasedDistances.set('bk',0.333);
+unphasedDistances.set('dk',0.333);
+unphasedDistances.set('hk',0.167);
+unphasedDistances.set('kv',0.167);
+unphasedDistances.set('mm',0.500);
+unphasedDistances.set('bm',0.167);
+unphasedDistances.set('dm',0.167);
+unphasedDistances.set('hm',0.333);
+unphasedDistances.set('mv',0.333);
+unphasedDistances.set('bb',0.333);
+unphasedDistances.set('bd',0.222);
+unphasedDistances.set('bh',0.222);
+unphasedDistances.set('bv',0.222);
+unphasedDistances.set('dd',0.333);
+unphasedDistances.set('dh',0.222);
+unphasedDistances.set('dv',0.222);
+unphasedDistances.set('hh',0.333);
+unphasedDistances.set('hv',0.222);
+unphasedDistances.set('vv',0.333);
+
+
 function isSpName(seqName,spName,mapData)
 {
     if(mapData.get(seqName)===spName)
@@ -5,14 +113,7 @@ function isSpName(seqName,spName,mapData)
     return false;
 }
 
-function getNumberSeqs(spName,mapData)
-{
-    let noSeqs=0;
-    for(let species of mapData.values())
-        if(species === spName) noSeqs++;
-    return noSeqs;
-}
-
+// gets the maximum number of seequences for each species at any locus
 function getMaxNumberSeqs(spName,sequenceData,mapData)
 {
     let seqMaxCount = 0;
@@ -33,6 +134,7 @@ function getSpecimen(seqName)
     return seqName.substr(seqName.indexOf('^')+1);
 }
 
+// collects sequences into seqBySpec[locus][species][seqs]
 function getSeqBySpecies (sequenceData,speciesList,mapData) {
     const seqBySpec=[];
     for(let locus of sequenceData)
@@ -64,20 +166,33 @@ function getSeqBySpecies (sequenceData,speciesList,mapData) {
 function pairwiseDistance(seq1,seq2)
 {
     let p2Dist = 0.0;
+    let missing=0;
     for(let i in seq1)
-        p2Dist += siteMismatchProb(seq1[i],seq2[i]);
-    return p2Dist/seq1.length;
+    {
+	if(siteMismatchProb(seq1[i],seq2[i])===-1)
+	{
+	    --missing;
+//	    console.log('missing at: '+ i);
+	}
+	else
+	{
+            p2Dist += siteMismatchProb(seq1[i],seq2[i]);
+//	    console.log(`p2Dist at ${i} is ${p2Dist}`);
+	}	}
+    return p2Dist/(seq1.length + missing);
 };
 
 function siteMismatchProb(site1,site2)
 {
+    const duplet_array = [site1.toLowerCase(),site2.toLowerCase()];
+    let duplet_string = duplet_array.sort().join('');
     const missingData = new Set();
     missingData.add('-');
     missingData.add('?');
-    if(site1 != site2)
-        if(!missingData.has(site1)&&!missingData.has(site2))
-            return 1;
-    return 0;
+    missingData.add('n');
+    if(!missingData.has(site1)&&!missingData.has(site2))
+        return unphasedDistances.get(duplet_string);
+    return -1;
 }
 
 

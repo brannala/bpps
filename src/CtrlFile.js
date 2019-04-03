@@ -1,24 +1,18 @@
 import React, { Component } from "react";
 import { Columns, Column } from 'react-flex-columns';
 import "./CtrlFile.css";
-import CtrlFunc, { ParseMapText, MapFileUpload, getSpeciesList } from "./CtrlFunc";
-import PriorFunc, { getSeqBySpecies, avgDistance, maxDistance, priorFromSeqs, getNumberSeqs, getMaxNumberSeqs } from "./PriorFunc";
+import { ParseMapText, MapFileUpload, getSpeciesList } from "./CtrlFunc";
+import { getSeqBySpecies, priorFromSeqs, getMaxNumberSeqs } from "./PriorFunc";
 import CreateControlFile from "./CreateControlFile";
 import CtrlFileOptions from "./CtrlFileOptions";
-import GetFile from "./GetFile";
-import Trees, { randomTree, newickFromTree } from "./Trees";
-var FileSaver = require('file-saver');
+import { randomTree, newickFromTree } from "./Trees";
 
-
-    
 class CtrlFile extends Component {
     constructor(props) {
         super(props);
-
         this.state = { mapData: [], mapFileName: '', ctrlFileOpts: { speciesDelim: false, speciesTreeInf: true, diploid: false,
                                                                      burnin: 2000, sampleFreq: 2, mcmcSamples: 20000 },
                        nTree: "", seqBySpecies: [], priors: { priorTheta: {a: 3.0, b: 0.002}, priorTau: {a: 3.0, b: 0.002}}, numberSeqs: [], speciesList: [] };
-
         this.handleMapFileRead = this.handleMapFileRead.bind(this);
         this.handleSpecDelimCheckbox = this.handleSpecDelimCheckbox.bind(this);
         this.handleSpecTreeInfCheckbox = this.handleSpecTreeInfCheckbox.bind(this);
@@ -45,7 +39,6 @@ class CtrlFile extends Component {
         this.setState({ numberSeqs: numSeqs });
         
     }
-
 
     handleSpecDelimCheckbox(e)
     {
@@ -89,10 +82,6 @@ class CtrlFile extends Component {
         this.setState({ ctrlFileOpts: cFO });
     }
 
-
-    
-    
-
     render() {
         return (
             <div>
@@ -109,20 +98,15 @@ class CtrlFile extends Component {
                                      handleBurninSet={this.handleBurninSet}
                                      handleSampleFreqSet={this.handleSampleFreqSet}
                                      handleMcmcSamples={this.handleMcmcSamples}/>
-
                   </Column>
                   <Column size={35}>
-
                     <CreateControlFile sequenceData={this.props.sequenceData} mapData={this.state.mapData} seqFileName={this.props.seqFileName}
                                        mapFileName={this.state.mapFileName} ctrlFileOpts={this.state.ctrlFileOpts} speciesList={this.state.speciesList}
                                        numberSeqs={this.state.numberSeqs} nTree={this.state.nTree} priors={this.state.priors}></CreateControlFile>
-
-
                   </Column>
                 </Columns>
               </div>
               <div>
-
               </div>
               <div className="quick-start"><p>Quick start: If step 1 is complete a link will appear above to upload a map file. Upload the mapfile
                                              created in step 2 (or another mapfile conforming with the sequence data uploaded in step 1.</p></div>
