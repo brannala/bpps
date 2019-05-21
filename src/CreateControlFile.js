@@ -11,7 +11,10 @@ function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesLi
     controlFileText += `    seqfile = ${seqFileName} \n`;
     controlFileText += `    Imapfile = ${mapFileName} \n`; 
     controlFileText += "    outfile = out.txt \n    mcmcfile = mcmc.txt \n\n";
-    controlFileText += `    speciesdelimitation = ${Number(ctrlFileOpts.speciesDelim)} 0 2 \n`;
+    if(Number(ctrlFileOpts.speciesDelim)==0)
+        controlFileText += `    speciesdelimitation = ${Number(ctrlFileOpts.speciesDelim)}\n`;
+    else
+        controlFileText += `    speciesdelimitation = ${Number(ctrlFileOpts.speciesDelim)} 0 2 \n`;
     controlFileText += `    speciestree = ${Number(ctrlFileOpts.speciesTreeInf)} \n`;
     controlFileText += `    species&tree = ${speciesList.length}  `;
     for(let i in speciesList)
