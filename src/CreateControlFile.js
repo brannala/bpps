@@ -11,7 +11,7 @@ function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesLi
     controlFileText += `    seqfile = ${seqFileName} \n`;
     controlFileText += `    Imapfile = ${mapFileName} \n`; 
     controlFileText += "    outfile = out.txt \n    mcmcfile = mcmc.txt \n\n";
-    controlFileText += `    speciesdelimitation = ${Number(ctrlFileOpts.speciesDelim)} \n`;
+    controlFileText += `    speciesdelimitation = ${Number(ctrlFileOpts.speciesDelim)} 0 2 \n`;
     controlFileText += `    speciestree = ${Number(ctrlFileOpts.speciesTreeInf)} \n`;
     controlFileText += `    species&tree = ${speciesList.length}  `;
     for(let i in speciesList)
@@ -31,7 +31,7 @@ function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesLi
     controlFileText += `    tauprior = ${priors.priorTau.a}  ${priors.priorTau.b.toPrecision(2)} \n`; 
 
     controlFileText += "    finetune = 1: 0.02 0.02 0.02 0.02 0.02 0.02 0.02 \n";
-    controlFileText += "    print = 1 0 0 \n";
+    controlFileText += "    print = 1 0 0 0 \n";
     controlFileText += `    burnin = ${ctrlFileOpts.burnin} \n`;
     controlFileText += `    sampfreq = ${ctrlFileOpts.sampleFreq} \n`;
     controlFileText += `    nsample = ${ctrlFileOpts.mcmcSamples} \n`;
