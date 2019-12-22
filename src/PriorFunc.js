@@ -184,17 +184,22 @@ function pairwiseDistance(seq1,seq2)
 
 function siteMismatchProb(site1,site2)
 {
-    const duplet_array = [site1.toLowerCase(),site2.toLowerCase()];
+    let s1=site1.toLowerCase();
+    let s2=site2.toLowerCase();
+    if(s1=='u')
+        s1='t';
+    if(s2=='u')
+        s2='t';
+    const duplet_array = [s1,s2];
     let duplet_string = duplet_array.sort().join('');
     const missingData = new Set();
     missingData.add('-');
     missingData.add('?');
     missingData.add('n');
-    if(!missingData.has(site1)&&!missingData.has(site2))
+    if(!missingData.has(s1)&&!missingData.has(s2))
         return unphasedDistances.get(duplet_string);
     return -1;
 }
-
 
 function avgDistance(sequences)
 {
