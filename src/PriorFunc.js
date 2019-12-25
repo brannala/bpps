@@ -137,7 +137,7 @@ function getSpecimen(seqName)
 // collects sequences into seqBySpec[locus][species][seqs]
 function getSeqBySpecies (sequenceData,speciesList,mapData) {
     const seqBySpec=[];
-    for(let locus of sequenceData)
+    for(let locus=0; locus<=sequenceData.length; locus++)
         seqBySpec.push([]);
     let l=0;
     for(let locus of sequenceData)
@@ -148,11 +148,9 @@ function getSeqBySpecies (sequenceData,speciesList,mapData) {
             let seqsEmpty=true;
             for(let sequences of locus.sequences)
             {
-//                console.log(mapData[getSpecimen(sequences.seqname)]+ " " + species);
                 if(isSpName(getSpecimen(sequences.seqname),species,mapData))
                 {
                     seqs.push(sequences.seq); seqsEmpty=false;
-//                    console.log(getSpecimen(sequences.seqname) + " " + species); 
                 }
             }
             if(!seqsEmpty)
@@ -186,9 +184,9 @@ function siteMismatchProb(site1,site2)
 {
     let s1=site1.toLowerCase();
     let s2=site2.toLowerCase();
-    if(s1=='u')
+    if(s1==='u')
         s1='t';
-    if(s2=='u')
+    if(s2==='u')
         s2='t';
     const duplet_array = [s1,s2];
     let duplet_string = duplet_array.sort().join('');
@@ -225,7 +223,6 @@ function maxDistance(sequences)
             allSeqs = allSeqs.concat(seqs);
         combinedSeqs.push(allSeqs);
     }
- //   console.log(combinedSeqs);
     for(let locus of combinedSeqs)
         for(let k=0; k < (locus.length - 1); k++)
             for(let j=k; j < locus.length; j++)

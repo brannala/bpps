@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import MapFunctions, { uniqueSeqNames, seqToSpecName, createMapFileText } from "./MapFunctions";
+import { uniqueSeqNames, seqToSpecName, createMapFileText } from "./MapFunctions";
 import { Columns, Column } from 'react-flex-columns';
 import "./Mapfile.css";
 import DisplayMatchedSeqs from "./DisplayMatchedSeqs";
@@ -10,7 +10,7 @@ var FileSaver = require('file-saver');
 
 function MapIsDone(props)
 {
-    const isDone = props.mapDone;
+ //   const isDone = props.mapDone;
     if(props.mapDone)
     {
         let mapFileName = props.seqFileName.substr(0,props.seqFileName.indexOf('.'));

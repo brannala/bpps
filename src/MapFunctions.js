@@ -37,7 +37,7 @@ function seqToSpecName(uniqueNames,regExp_SpName)
 function createMapFileText(seqMatches)
 {
     let mapFileText = "";
-    let rExp = new RegExp('.*\^.+');
+    let rExp = new RegExp('.*^.+');
     let mapData = [];
     try{
 	if(seqMatches.matchedSeqs.length>0)
