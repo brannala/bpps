@@ -10,7 +10,7 @@ function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesLi
     controlFileText += "    seed = -1 \n";
     controlFileText += `    seqfile = ${seqFileName} \n`;
     controlFileText += `    Imapfile = ${mapFileName} \n`; 
-    controlFileText += "    outfile = out.txt \n    mcmcfile = mcmc.txt \n\n";
+    controlFileText += "    jobname = out \n\n";
     if(Number(ctrlFileOpts.speciesDelim)===0)
         controlFileText += `    speciesdelimitation = ${Number(ctrlFileOpts.speciesDelim)}\n`;
     else
@@ -23,17 +23,17 @@ function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesLi
     controlFileText += numberSeqs;
     controlFileText += "\n";
     controlFileText += `                    ${nTree}; \n`;
-    controlFileText += "    diploid = ";
+    controlFileText += "    phase =";
     for(let i=0; i<speciesList.length; i++)
         controlFileText += ` ${Number(ctrlFileOpts.diploid)}`;
     controlFileText += "\n";
     controlFileText += "    cleandata = 0\n";
     controlFileText += "    usedata = 1\n";    
     controlFileText += `    nloci = ${nloci}  \n`;
-    controlFileText += `    thetaprior = ${priors.priorTheta.a}  ${priors.priorTheta.b.toPrecision(2)} \n`; 
-    controlFileText += `    tauprior = ${priors.priorTau.a}  ${priors.priorTau.b.toPrecision(2)} \n`; 
+    controlFileText += `    thetaprior = invgamma ${priors.priorTheta.a}  ${priors.priorTheta.b.toPrecision(2)} \n`; 
+    controlFileText += `    tauprior = invgamma ${priors.priorTau.a}  ${priors.priorTau.b.toPrecision(2)} \n`; 
 
-    controlFileText += "    finetune = 1: 0.02 0.02 0.02 0.02 0.02 0.02 0.02 \n";
+    controlFileText += "    finetune = 1 Gage:0.02 Gspr:0.02 tau:0.02 mix:0.02 lrht:0.02 phis:0.02 pi:0.02 \n";
     controlFileText += "    print = 1 0 0 0 \n";
     controlFileText += `    burnin = ${ctrlFileOpts.burnin} \n`;
     controlFileText += `    sampfreq = ${ctrlFileOpts.sampleFreq} \n`;

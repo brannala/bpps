@@ -1,0 +1,124 @@
+/* Inline error message - subtle, appears near form inputs */
+.error-message {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    color: #b91c1c;
+    font-size: 0.9em;
+}
+
+/* Error banner - more prominent, for file/parsing errors */
+.error-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    background-color: #fef2f2;
+    border: 1px solid #f87171;
+    border-left: 4px solid #dc2626;
+    border-radius: 6px;
+    color: #991b1b;
+    font-size: 0.95em;
+}
+
+.error-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: #dc2626;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 0.85em;
+    flex-shrink: 0;
+}
+
+.error-text {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.error-dismiss {
+    background: none;
+    border: none;
+    color: #991b1b;
+    font-size: 1.3em;
+    cursor: pointer;
+    padding: 0 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+
+.error-dismiss:hover {
+    opacity: 1;
+}
+
+/* Form field error state */
+.input-error {
+    border-color: #f87171 !important;
+    background-color: #fef2f2 !important;
+}
+
+.input-error:focus {
+    outline-color: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+}
+
+/* Warning banner - for non-critical warnings */
+.warning-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    background-color: #fffbeb;
+    border: 1px solid #fbbf24;
+    border-left: 4px solid #d97706;
+    border-radius: 6px;
+    color: #92400e;
+    font-size: 0.95em;
+}
+
+.warning-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: #d97706;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 0.85em;
+    flex-shrink: 0;
+}
+
+.warning-text {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.warning-dismiss {
+    background: none;
+    border: none;
+    color: #92400e;
+    font-size: 1.3em;
+    cursor: pointer;
+    padding: 0 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+
+.warning-dismiss:hover {
+    opacity: 1;
+}

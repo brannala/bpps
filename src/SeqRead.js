@@ -29,7 +29,7 @@ function SeqRead(input) {
         {
             let sname,seq;
             sname=modInput.split(/\s+/,1);  // extract sequence name
-            if((sname[0]===null)||(sname[0].match(/[^/d+].*/)===null))
+            if((sname[0]===null)||(sname[0].match(/[^\d].*/)===null))
                 return errorResult(`unexpected input at locus ${locusNo+1} near ${sname}`);
             modInput = (modInput.replace(/[^\d][^\s]+/,"")).trim(); // trim off sequence name
             seq=modInput.split(/\n|\r/,1);  //extract sequence

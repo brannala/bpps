@@ -2,34 +2,36 @@ import React, { Component } from "react";
 import "./Mapfile.css";
 
 class DisplayMatchedSeqs extends Component {
-    constructor(props) {
-        super(props);
-        this.getMatchedAsString = this.getMatchedAsString.bind(this); 
-    }
-    // creates a string for each sequence name + species name match for display    
-    getMatchedAsString()
-    {
-        let matched = "";
-        if(this.props.seqMatches.matchedSeqs.length>0)
-        {
-            for(let i=0; i < this.props.seqMatches.matchedSeqs.length; i++)
-                for(let j=0; j < this.props.seqMatches.matchedSeqs[i].seqNames.length; j++)
-            {
-                matched += (this.props.seqMatches.matchedSeqs[i].seqNames[j] + " = " + this.props.seqMatches.matchedSeqs[i].spName + "\n");
-            } 
-        } 
-        return matched.trim();
-    }
-
     render() {
+        const { matchedSeqs } = this.props.seqMatches;
+
+        if (!matchedSeqs || matchedSeqs.length === 0) {
+            return (
+                <div className="species-groups-empty">
+                    No sequences assigned yet
+                </div>
+            );
+        }
+
         return (
-            <div>
-              <div className="title">
-                <p>Sequence name =  species name </p>                     
-              </div>
-              <div className="col3">
-                <textarea className="text-mapped" value={this.getMatchedAsString()}></textarea>
-              </div>
+            <div className="species-groups">
+                <div className="species-groups-header">Assigned Species</div>
+                {matchedSeqs.map((group, index) => (
+                    <div key={index} className="species-card">
+                        <div className="species-card-header">
+                            <span className="species-card-name">{group.spName}</span>
+                            <span className="species-card-count">{group.seqNames.length}</span>
+                        </div>
+                        <div className="species-tree">
+                            {group.seqNames.map((seqName, seqIndex) => (
+                                <div key={seqIndex} className="tree-node">
+                                    <span className="tree-branch"></span>
+                                    <span className="tree-label">{seqName}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </div>
         );
     }

@@ -1,4 +1,5 @@
-let unphasedDistances = new Map();
+// Pre-computed distance lookup table (constant, created once)
+const unphasedDistances = new Map();
 unphasedDistances.set('aa',0.0);
 unphasedDistances.set('ac',1.0);
 unphasedDistances.set('ag',1.0);
@@ -9,6 +10,9 @@ unphasedDistances.set('ct',1.0);
 unphasedDistances.set('gg',0.0);
 unphasedDistances.set('gt',1.0);
 unphasedDistances.set('tt',0.0);
+
+// Pre-computed missing data characters (constant, created once)
+const MISSING_DATA = new Set(['-', '?', 'n']);
 unphasedDistances.set('ar',0.500);
 unphasedDistances.set('ay',1.0);
 unphasedDistances.set('as',1.0);
@@ -113,7 +117,7 @@ function isSpName(seqName,spName,mapData)
     return false;
 }
 
-// gets the maximum number of seequences for each species at any locus
+// gets the maximum number of sequences for each species at any locus
 function getMaxNumberSeqs(spName,sequenceData,mapData)
 {
     let seqMaxCount = 0;
@@ -129,105 +133,227 @@ function getMaxNumberSeqs(spName,sequenceData,mapData)
     return seqMaxCount;
 }
 
+// Computes max sequence counts for ALL species in a single pass (much faster than calling getMaxNumberSeqs per species)
+function getAllMaxNumberSeqs(speciesList, sequenceData, mapData) {
+    // Initialize counts for each species
+    const maxCounts = new Map();
+    for (const sp of speciesList) {
+        maxCounts.set(sp, 0);
+    }
+
+    // Single pass through all loci
+    for (const locus of sequenceData) {
+        // Count sequences per species at this locus
+        const locusCounts = new Map();
+        for (const sp of speciesList) {
+            locusCounts.set(sp, 0);
+        }
+
+        for (const seq of locus.sequences) {
+            const specimen = getSpecimen(seq.seqname);
+            const species = mapData.get(specimen);
+            if (species && locusCounts.has(species)) {
+                locusCounts.set(species, locusCounts.get(species) + 1);
+            }
+        }
+
+        // Update max counts
+        for (const sp of speciesList) {
+            const count = locusCounts.get(sp);
+            if (count > maxCounts.get(sp)) {
+                maxCounts.set(sp, count);
+            }
+        }
+    }
+
+    return maxCounts;
+}
+
 function getSpecimen(seqName)
 {
     return seqName.substr(seqName.indexOf('^')+1);
 }
 
 // collects sequences into seqBySpec[locus][species][seqs]
-function getSeqBySpecies (sequenceData,speciesList,mapData) {
-    const seqBySpec=[];
-    for(let locus=0; locus<=sequenceData.length; locus++)
+function getSeqBySpecies (sequenceData, speciesList, mapData) {
+    const seqBySpec = [];
+    const numLoci = sequenceData.length;
+
+    // Pre-initialize array
+    for(let i = 0; i < numLoci; i++)
         seqBySpec.push([]);
-    let l=0;
-    for(let locus of sequenceData)
+
+    // Create a Set of species for O(1) lookup
+    const speciesSet = new Set(speciesList);
+
+    for(let l = 0; l < numLoci; l++)
     {
+        const locus = sequenceData[l];
+        // Group sequences by species at this locus
+        const speciesSeqs = new Map();
+
+        for(let seq of locus.sequences)
+        {
+            const specimen = getSpecimen(seq.seqname);
+            const species = mapData.get(specimen);
+
+            if(species && speciesSet.has(species))
+            {
+                if(!speciesSeqs.has(species))
+                    speciesSeqs.set(species, []);
+                speciesSeqs.get(species).push(seq.seq);
+            }
+        }
+
+        // Maintain species order from speciesList
         for(let species of speciesList)
         {
-            let seqs = [];
-            let seqsEmpty=true;
-            for(let sequences of locus.sequences)
-            {
-                if(isSpName(getSpecimen(sequences.seqname),species,mapData))
-                {
-                    seqs.push(sequences.seq); seqsEmpty=false;
-                }
-            }
-            if(!seqsEmpty)
-                seqBySpec[l].push(seqs); 
+            const seqs = speciesSeqs.get(species);
+            if(seqs && seqs.length > 0)
+                seqBySpec[l].push(seqs);
         }
-        l++;
     }
-        return seqBySpec;
+    return seqBySpec;
 }
 
 function pairwiseDistance(seq1,seq2)
 {
     let p2Dist = 0.0;
-    let missing=0;
-    for(let i in seq1)
+    let missing = 0;
+    const len = seq1.length;
+
+    // Use regular for loop (faster than for...in on strings)
+    for(let i = 0; i < len; i++)
     {
-	if(siteMismatchProb(seq1[i],seq2[i])===-1)
-	{
-	    --missing;
-//	    console.log('missing at: '+ i);
-	}
-	else
-	{
-            p2Dist += siteMismatchProb(seq1[i],seq2[i]);
-//	    console.log(`p2Dist at ${i} is ${p2Dist}`);
-	}	}
-    return p2Dist/(seq1.length + missing);
-};
+        // Cache result to avoid calling siteMismatchProb twice
+        const prob = siteMismatchProb(seq1[i], seq2[i]);
+        if(prob === -1)
+        {
+            ++missing;
+        }
+        else
+        {
+            p2Dist += prob;
+        }
+    }
+    return p2Dist / (len - missing);
+}
 
 function siteMismatchProb(site1,site2)
 {
-    let s1=site1.toLowerCase();
-    let s2=site2.toLowerCase();
-    if(s1==='u')
-        s1='t';
-    if(s2==='u')
-        s2='t';
-    const duplet_array = [s1,s2];
-    let duplet_string = duplet_array.sort().join('');
-    const missingData = new Set();
-    missingData.add('-');
-    missingData.add('?');
-    missingData.add('n');
-    if(!missingData.has(s1)&&!missingData.has(s2))
-        return unphasedDistances.get(duplet_string);
-    return -1;
+    let s1 = site1.toLowerCase();
+    let s2 = site2.toLowerCase();
+
+    // Check for missing data first (fast path)
+    if(MISSING_DATA.has(s1) || MISSING_DATA.has(s2))
+        return -1;
+
+    // Normalize U to T
+    if(s1 === 'u') s1 = 't';
+    if(s2 === 'u') s2 = 't';
+
+    // Create sorted duplet without array allocation
+    const duplet_string = s1 <= s2 ? s1 + s2 : s2 + s1;
+    return unphasedDistances.get(duplet_string);
 }
+
+// Maximum number of pairs to sample for distance calculations
+const MAX_PAIRS_SAMPLE = 100;
 
 function avgDistance(sequences)
 {
-    let sumDist=0.0;
-    if(sequences.length <= 1)
+    const n = sequences.length;
+    if(n <= 1)
         return 0;
-    for(let i=0; i < (sequences.length-1); i++)
-        for (let j=i+1; j < sequences.length; j++)
-    {
-        sumDist += pairwiseDistance(sequences[i],sequences[j]);
+
+    const totalPairs = (n * (n - 1)) / 2;
+
+    // For small datasets, compute all pairs
+    if (totalPairs <= MAX_PAIRS_SAMPLE) {
+        let sumDist = 0.0;
+        for(let i = 0; i < n - 1; i++)
+            for (let j = i + 1; j < n; j++)
+                sumDist += pairwiseDistance(sequences[i], sequences[j]);
+        return (2.0 * sumDist) / (n * (n - 1));
     }
-    return (2.0*sumDist)/(sequences.length*(sequences.length-1));
+
+    // For large datasets, sample random pairs
+    let sumDist = 0.0;
+    const sampled = new Set();
+    let sampleCount = 0;
+
+    while (sampleCount < MAX_PAIRS_SAMPLE) {
+        const i = Math.floor(Math.random() * n);
+        let j = Math.floor(Math.random() * n);
+        if (i === j) continue;
+
+        // Ensure i < j for consistent key
+        const key = i < j ? `${i},${j}` : `${j},${i}`;
+        if (sampled.has(key)) continue;
+
+        sampled.add(key);
+        const ii = i < j ? i : j;
+        const jj = i < j ? j : i;
+        sumDist += pairwiseDistance(sequences[ii], sequences[jj]);
+        sampleCount++;
+    }
+
+    return sumDist / sampleCount;
 }
 
 function maxDistance(sequences)
 {
-    let maxDist=0.0;
-    let combinedSeqs = [];
+    let maxDist = 0.0;
+
     for(let locus of sequences)
     {
-        let allSeqs=[];
+        // Flatten all sequences at this locus
+        const allSeqs = [];
         for(let seqs of locus)
-            allSeqs = allSeqs.concat(seqs);
-        combinedSeqs.push(allSeqs);
+        {
+            for(let seq of seqs)
+                allSeqs.push(seq);
+        }
+
+        const n = allSeqs.length;
+        if (n < 2) continue;
+
+        const totalPairs = (n * (n - 1)) / 2;
+
+        // For small datasets, compute all pairs
+        if (totalPairs <= MAX_PAIRS_SAMPLE) {
+            for(let k = 0; k < n - 1; k++)
+            {
+                for(let j = k + 1; j < n; j++)
+                {
+                    const dist = pairwiseDistance(allSeqs[k], allSeqs[j]);
+                    if(dist > maxDist)
+                        maxDist = dist;
+                }
+            }
+        } else {
+            // For large datasets, sample random pairs to estimate max
+            const sampled = new Set();
+            let sampleCount = 0;
+
+            while (sampleCount < MAX_PAIRS_SAMPLE) {
+                const i = Math.floor(Math.random() * n);
+                let j = Math.floor(Math.random() * n);
+                if (i === j) continue;
+
+                const key = i < j ? `${i},${j}` : `${j},${i}`;
+                if (sampled.has(key)) continue;
+
+                sampled.add(key);
+                const ii = i < j ? i : j;
+                const jj = i < j ? j : i;
+                const dist = pairwiseDistance(allSeqs[ii], allSeqs[jj]);
+                if (dist > maxDist)
+                    maxDist = dist;
+                sampleCount++;
+            }
+        }
     }
-    for(let locus of combinedSeqs)
-        for(let k=0; k < (locus.length - 1); k++)
-            for(let j=k; j < locus.length; j++)
-                if(pairwiseDistance(locus[k],locus[j]) > maxDist)
-                    maxDist = pairwiseDistance(locus[k],locus[j]);
     return maxDist;
 }
 
@@ -250,4 +376,4 @@ function priorFromSeqs(sequences)
 }
 
 
-export { getSeqBySpecies, pairwiseDistance, avgDistance, priorFromSeqs, maxDistance, getMaxNumberSeqs }
+export { getSeqBySpecies, pairwiseDistance, avgDistance, priorFromSeqs, maxDistance, getMaxNumberSeqs, getAllMaxNumberSeqs, siteMismatchProb }
