@@ -315,8 +315,8 @@ class MapFile extends Component {
                     {isAutoMode ? 'Auto-detected species (some need manual assignment)' : 'Manual assignment'}
                   </span>
                 </div>
-                <Columns gutters stackMaxWidth={700}>
-                  <Column size={10}>
+                <Columns gutters stackMaxWidth={800}>
+                  <Column size={16}>
                     <DisplayUnmatchedSeqs
                         seqMatches={this.state.seqMatches}
                         selectedSeqs={this.state.selectedSeqs}
@@ -326,7 +326,7 @@ class MapFile extends Component {
                         onSelectNone={this.handleSelectNone}
                     />
                   </Column>
-                  <Column size={21}>
+                  <Column size={18}>
                     <div className="title">
                       <p>Assign sequences to species</p>
                     </div>
@@ -386,7 +386,7 @@ class MapFile extends Component {
                       </div>
                     )}
                   </Column>
-                  <Column siz={20}>
+                  <Column size={17}>
                     <DisplayMatchedSeqs seqMatches={this.state.seqMatches}/>
                   </Column>
                 </Columns>

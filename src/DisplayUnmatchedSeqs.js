@@ -105,7 +105,7 @@ class DisplayUnmatchedSeqs extends Component {
                                 onChange={(e) => this.handleCheckboxChange(seqName, index, e)}
                                 className="seq-checkbox"
                             />
-                            <span className="seq-name">{seqName}</span>
+                            <span className="seq-name" title={seqName}>{seqName}</span>
                         </div>
                     ))}
                 </div>

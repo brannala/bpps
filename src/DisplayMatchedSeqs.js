@@ -26,7 +26,7 @@ class DisplayMatchedSeqs extends Component {
                             {group.seqNames.map((seqName, seqIndex) => (
                                 <div key={seqIndex} className="tree-node">
                                     <span className="tree-branch"></span>
-                                    <span className="tree-label">{seqName}</span>
+                                    <span className="tree-label" title={seqName}>{seqName}</span>
                                 </div>
                             ))}
                         </div>

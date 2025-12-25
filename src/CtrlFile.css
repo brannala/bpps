@@ -3,7 +3,6 @@
 /* Control file text area */
 .ctrlFileBox {
     width: 100%;
-    max-width: 500px;
     height: 320px;
     font-family: 'Source Code Pro', monospace;
     border: 2px solid #d4e5d8;
@@ -14,6 +13,7 @@
     color: #1e3a29;
     padding: 16px;
     resize: vertical;
+    box-sizing: border-box;
 }
 
 .ctrlFileBox:focus {
@@ -46,6 +46,27 @@
     align-items: center;
     justify-content: space-between;
     padding: 12px 0;
+}
+
+/* Inline option row for multiple controls on one line */
+.option-row-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 12px 0;
+}
+
+.option-group-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.option-label-inline {
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.9em;
+    color: #1e3a29;
+    font-weight: 400;
 }
 
 .option-label-flat {
@@ -367,4 +388,888 @@
 
 .topology-button:focus-visible {
     box-shadow: 0 0 0 2px rgba(74, 124, 89, 0.3);
+}
+
+/* ==================== */
+/* Migration Section */
+/* ==================== */
+
+.migration-section {
+    margin-top: 8px;
+}
+
+.migration-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 12px 0;
+    border-bottom: 1px solid #e8efe9;
+    user-select: none;
+}
+
+.migration-header:hover {
+    background: rgba(74, 124, 89, 0.05);
+    margin: 0 -8px;
+    padding: 12px 8px;
+    border-radius: 4px;
+}
+
+.migration-toggle-icon {
+    color: #6b8f7a;
+    font-size: 0.7em;
+    transition: transform 0.2s ease;
+}
+
+.migration-toggle-icon.expanded {
+    transform: rotate(180deg);
+}
+
+.migration-content {
+    padding: 12px 0;
+}
+
+.migration-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background-color: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-left: 3px solid #f59e0b;
+    border-radius: 6px;
+    font-size: 0.8em;
+    color: #92400e;
+    margin: 12px 0;
+    line-height: 1.4;
+}
+
+.migration-warning .warning-icon {
+    font-weight: bold;
+    color: #f59e0b;
+}
+
+.migration-tree-container {
+    margin-bottom: 16px;
+}
+
+.migration-tree-label {
+    font-size: 0.85em;
+    color: #4a6352;
+    margin: 0 0 8px 0;
+}
+
+.migration-route-count {
+    font-size: 0.8em;
+    color: #6b8f7a;
+    margin: 8px 0;
+    font-style: italic;
+}
+
+.migration-info {
+    font-size: 0.85em;
+    color: #6b8f7a;
+    padding: 12px 0;
+}
+
+/* wprior inputs */
+.wprior-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e8efe9;
+}
+
+.wprior-label {
+    font-size: 0.85em;
+    color: #4a6352;
+    margin-bottom: 8px;
+}
+
+.wprior-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wprior-param-label {
+    font-size: 0.9em;
+    color: #1e3a29;
+    font-weight: 500;
+}
+
+.wprior-input {
+    width: 70px;
+    padding: 6px 8px;
+    border: none;
+    border-bottom: 1px solid #d4e5d8;
+    background: transparent;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.9em;
+    color: #1e3a29;
+    text-align: right;
+}
+
+.wprior-input:focus {
+    outline: none;
+    border-bottom-color: #4a7c59;
+}
+
+.wprior-mean {
+    font-size: 0.8em;
+    color: #6b8f7a;
+    margin-top: 6px;
+}
+
+/* ==================== */
+/* Tree Visualizer */
+/* ==================== */
+
+.tree-visualizer {
+    background: #f8faf8;
+    border: 1px solid #d4e5d8;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 8px 0;
+}
+
+.tree-visualizer-empty {
+    font-size: 0.85em;
+    color: #6b8f7a;
+    padding: 20px;
+    text-align: center;
+}
+
+.tree-svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.tree-node-circle {
+    fill: #4a7c59;
+    stroke: #1e3a29;
+    stroke-width: 1.5;
+}
+
+.tree-branch {
+    stroke: #4a7c59;
+    stroke-width: 2;
+}
+
+.tree-tip-label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 12px;
+    fill: #1e3a29;
+}
+
+.tree-internal-node {
+    fill: #6b8f7a;
+    stroke: #4a7c59;
+    stroke-width: 1.5;
+}
+
+.tree-internal-label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    fill: #6b8f7a;
+    font-style: italic;
+}
+
+/* Migration arrows */
+.migration-arrow {
+    stroke-width: 2.5;
+    fill: none;
+    transition: all 0.2s ease;
+}
+
+.migration-arrow.active {
+    stroke: #dc2626;
+}
+
+.migration-arrow.active-reverse {
+    stroke: #2563eb;
+}
+
+.migration-arrow.potential {
+    stroke: #b8d4c0;
+    stroke-dasharray: 4 2;
+}
+
+.migration-arrow:hover {
+    stroke-width: 3.5;
+}
+
+.arrow-marker {
+    transition: all 0.2s ease;
+}
+
+.arrow-marker.active {
+    fill: #dc2626;
+}
+
+.arrow-marker.active-reverse {
+    fill: #2563eb;
+}
+
+.arrow-marker.potential {
+    fill: #b8d4c0;
+}
+
+/* Migration hotspots */
+.migration-hotspot {
+    fill: rgba(74, 124, 89, 0.1);
+    stroke: #b8d4c0;
+    stroke-width: 1;
+    stroke-dasharray: 3 2;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.migration-hotspot:hover {
+    fill: rgba(74, 124, 89, 0.2);
+    stroke: #4a7c59;
+}
+
+.hotspot-plus {
+    font-size: 14px;
+    fill: #6b8f7a;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* Tree legend */
+.tree-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e8efe9;
+    font-size: 0.75em;
+    color: #6b8f7a;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.legend-circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.legend-circle.active {
+    background: #dc2626;
+}
+
+.legend-line {
+    width: 20px;
+    height: 3px;
+    border-radius: 2px;
+}
+
+.legend-line.active {
+    background: #dc2626;
+}
+
+.legend-line.reverse {
+    background: #2563eb;
+}
+
+.legend-plus {
+    width: 14px;
+    height: 14px;
+    background: rgba(74, 124, 89, 0.1);
+    border: 1px dashed #b8d4c0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #6b8f7a;
+}
+
+/* ==================== */
+/* Migration Matrix */
+/* ==================== */
+
+.migration-matrix-label {
+    font-size: 0.85em;
+    color: #4a6352;
+    margin: 12px 0 8px 0;
+}
+
+.migration-matrix-container {
+    margin: 8px 0;
+    overflow-x: auto;
+}
+
+.migration-matrix {
+    border-collapse: collapse;
+    font-size: 0.85em;
+    width: 100%;
+    max-width: 100%;
+}
+
+.migration-matrix th,
+.migration-matrix td {
+    border: 1px solid #d4e5d8;
+    padding: 8px 12px;
+    text-align: center;
+    min-width: 50px;
+}
+
+.matrix-corner {
+    background: #f0f5f1;
+    position: relative;
+    min-width: 70px;
+}
+
+.matrix-from-label {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    font-size: 0.75em;
+    color: #6b8f7a;
+    font-weight: normal;
+}
+
+.matrix-to-label {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 0.75em;
+    color: #6b8f7a;
+    font-weight: normal;
+}
+
+.matrix-header-cell {
+    background: #f0f5f1;
+    font-weight: 600;
+    color: #1e3a29;
+    font-family: 'Source Code Pro', monospace;
+}
+
+.matrix-row-header {
+    background: #f0f5f1;
+    font-weight: 600;
+    color: #1e3a29;
+    font-family: 'Source Code Pro', monospace;
+    text-align: left;
+}
+
+.matrix-cell {
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: #fff;
+}
+
+.matrix-cell:hover:not(.matrix-cell-disabled) {
+    background: #e8f5eb;
+}
+
+.matrix-cell-disabled {
+    background: #f5f5f5;
+    cursor: default;
+}
+
+.matrix-cell-active {
+    background: #e8f5eb;
+}
+
+.matrix-cell-dash {
+    color: #ccc;
+}
+
+.matrix-cell-check {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 4px;
+    border: 1px solid #d4e5d8;
+    background: #fff;
+    color: transparent;
+    font-weight: bold;
+}
+
+.matrix-cell-check.active {
+    background: #4a7c59;
+    border-color: #4a7c59;
+    color: #fff;
+}
+
+.matrix-empty {
+    font-size: 0.85em;
+    color: #6b8f7a;
+    padding: 20px;
+    text-align: center;
+}
+
+/* ==================== */
+/* Route Display */
+/* ==================== */
+
+.route-display {
+    margin: 12px 0;
+    padding: 10px 12px;
+    background: #f8faf8;
+    border: 1px solid #d4e5d8;
+    border-radius: 6px;
+}
+
+.route-display-empty {
+    font-size: 0.85em;
+    color: #6b8f7a;
+    font-style: italic;
+    padding: 8px 0;
+}
+
+.route-display-title {
+    font-size: 0.8em;
+    color: #6b8f7a;
+    margin-bottom: 6px;
+}
+
+.route-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.route-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: #fff;
+    border: 1px solid #d4e5d8;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+.route-source {
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 600;
+    color: #1e3a29;
+}
+
+.route-arrow {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+.route-target {
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 600;
+    color: #1e3a29;
+}
+
+/* ==================== */
+/* Collapsible Sections */
+/* ==================== */
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 12px 0;
+    border-bottom: 1px solid #e8efe9;
+    user-select: none;
+}
+
+.section-header:hover {
+    background: rgba(74, 124, 89, 0.05);
+    margin: 0 -8px;
+    padding: 12px 8px;
+    border-radius: 4px;
+}
+
+.section-toggle-icon {
+    color: #6b8f7a;
+    font-size: 0.7em;
+    transition: transform 0.2s ease;
+}
+
+.section-toggle-icon.expanded {
+    transform: rotate(180deg);
+}
+
+.section-content {
+    padding: 12px 0;
+}
+
+/* ==================== */
+/* Topology Editor */
+/* ==================== */
+
+.topology-editor {
+    padding: 4px 0;
+}
+
+.topology-button-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.topology-button-active {
+    background: #4a7c59;
+    color: white;
+    border-color: #4a7c59;
+}
+
+.topology-button-small {
+    padding: 4px 10px;
+    border: 1px solid #d4e5d8;
+    background: #f8faf8;
+    color: #4a7c59;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.8em;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+}
+
+.topology-button-small:hover {
+    background: #e8f5eb;
+}
+
+.spr-instructions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #e8f5eb;
+    border: 1px solid #4a7c59;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 0.85em;
+    color: #1e3a29;
+}
+
+.spr-status {
+    color: #4a6352;
+}
+
+.spr-status strong {
+    color: #1e3a29;
+}
+
+.topology-info {
+    font-size: 0.85em;
+    color: #6b8f7a;
+    padding: 12px 0;
+}
+
+/* Newick input */
+.newick-input-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e8efe9;
+}
+
+.newick-input-label {
+    font-size: 0.85em;
+    color: #4a6352;
+    margin-bottom: 8px;
+}
+
+.newick-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.newick-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #d4e5d8;
+    border-radius: 6px;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.85em;
+    color: #1e3a29;
+}
+
+.newick-input:focus {
+    outline: none;
+    border-color: #4a7c59;
+}
+
+.newick-error {
+    padding: 8px 12px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    color: #dc2626;
+    font-size: 0.85em;
+    margin-bottom: 12px;
+}
+
+/* ==================== */
+/* SPR Tree Editing Styles */
+/* ==================== */
+
+.node-click-area {
+    fill: transparent;
+    cursor: pointer;
+}
+
+.node-click-area:hover {
+    fill: rgba(74, 124, 89, 0.1);
+}
+
+.node-selected {
+    fill: #e8b931 !important;
+    stroke: #d4a52a !important;
+    stroke-width: 2 !important;
+}
+
+.node-in-subtree {
+    fill: #fbbf24 !important;
+    stroke: #f59e0b !important;
+}
+
+.node-valid-target {
+    stroke: #4a7c59 !important;
+    stroke-width: 2 !important;
+    stroke-dasharray: 3 2;
+}
+
+.node-valid-target:hover {
+    fill: #4a7c59 !important;
+    stroke: #1e3a29 !important;
+}
+
+.tree-branch-selected {
+    stroke: #e8b931 !important;
+    stroke-width: 3 !important;
+}
+
+.label-selected {
+    fill: #92400e !important;
+    font-weight: bold !important;
+}
+
+/* ==================== */
+/* Introgression Section Styles */
+/* ==================== */
+
+.introgression-section {
+    margin-top: 8px;
+}
+
+.introgression-events {
+    margin-top: 12px;
+}
+
+.introgression-events-label {
+    font-size: 0.85em;
+    color: #4a6352;
+    margin-bottom: 8px;
+}
+
+.introgression-event-list {
+    background: #f8faf8;
+    border: 1px solid #d4e5d8;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 12px;
+}
+
+.introgression-event-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: white;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+
+.introgression-event-row:last-child {
+    margin-bottom: 0;
+}
+
+.introgression-event-desc {
+    flex: 1;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.85em;
+    color: #1e3a29;
+}
+
+.introgression-remove-btn {
+    background: transparent;
+    border: none;
+    color: #dc2626;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.introgression-remove-btn:hover {
+    background: #fee2e2;
+}
+
+.introgression-empty {
+    color: #7a9882;
+    font-size: 0.85em;
+    font-style: italic;
+    padding: 12px;
+    text-align: center;
+    background: #f8faf8;
+    border: 1px dashed #d4e5d8;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.introgression-add-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.introgression-select {
+    padding: 6px 10px;
+    border: 2px solid #d4e5d8;
+    border-radius: 6px;
+    font-size: 0.85em;
+    background: white;
+    min-width: 100px;
+}
+
+.introgression-select:focus {
+    outline: none;
+    border-color: #4a7c59;
+}
+
+.introgression-arrow {
+    color: #4a7c59;
+    font-weight: bold;
+}
+
+.introgression-help {
+    font-size: 0.8em;
+    color: #7a9882;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+/* ==================== */
+/* Extended Newick Section */
+/* ==================== */
+
+.extended-newick-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e8efe9;
+}
+
+.extended-newick-label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #1e3a29;
+    margin-bottom: 4px;
+}
+
+.extended-newick-help {
+    font-size: 0.8em;
+    color: #7a9882;
+    margin-bottom: 8px;
+}
+
+.extended-newick-help code {
+    background: #f0f5f1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.9em;
+}
+
+.extended-newick-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #d4e5d8;
+    border-radius: 8px;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.85em;
+    resize: vertical;
+    min-height: 80px;
+    background: #fcfdfc;
+}
+
+.extended-newick-input:focus {
+    outline: none;
+    border-color: #4a7c59;
+    background: white;
+}
+
+/* ==================== */
+/* Phi Prior Section */
+/* ==================== */
+
+.phiprior-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e8efe9;
+}
+
+.phiprior-label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #1e3a29;
+    margin-bottom: 8px;
+}
+
+.phiprior-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.phiprior-param-label {
+    font-size: 0.9em;
+    color: #4a6352;
+    font-weight: 600;
+}
+
+.phiprior-input {
+    width: 70px;
+    padding: 6px 10px;
+    border: 2px solid #d4e5d8;
+    border-radius: 6px;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.phiprior-input:focus {
+    outline: none;
+    border-color: #4a7c59;
+}
+
+.phiprior-note {
+    font-size: 0.8em;
+    color: #7a9882;
+    margin-top: 6px;
+    font-style: italic;
+}
+
+/* ==================== */
+/* Introgression Editor */
+/* ==================== */
+
+.introgression-editor {
+    margin-top: 12px;
+}
+
+.extended-newick-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
 }
