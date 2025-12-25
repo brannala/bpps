@@ -88,7 +88,7 @@ function guessSpeciesFromPrefix(sequenceData) {
 
     // Create filter objects for each unique prefix
     const filters = [];
-    for (const [prefix, seqNames] of prefixMap) {
+    for (const [prefix] of prefixMap) {
         // Create regex that matches this exact prefix before ^
         const escapedPrefix = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const reg_exp = new RegExp(`^${escapedPrefix}\\^`);
