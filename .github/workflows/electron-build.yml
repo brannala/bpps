@@ -12,19 +12,18 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: windows-latest
             build_cmd: npm run electron:build:win
-            artifact_pattern: dist/*.exe
           - os: macos-latest
             build_cmd: npm run electron:build:mac
-            artifact_pattern: dist/*.dmg
           - os: ubuntu-latest
             build_cmd: npm run electron:build:linux
-            artifact_pattern: dist/*.AppImage
 
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -56,7 +55,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: always() && startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Download all artifacts
