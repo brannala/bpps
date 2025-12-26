@@ -46,11 +46,14 @@
   "build": {
     "appId": "com.brannala.bpps",
     "productName": "BPP Control File Generator",
+    "extends": null,
     "files": [
       "build/**/*",
-      "electron/**/*",
-      "node_modules/**/*"
+      "electron/**/*"
     ],
+    "extraMetadata": {
+      "main": "electron/main.js"
+    },
     "directories": {
       "buildResources": "assets",
       "output": "dist"

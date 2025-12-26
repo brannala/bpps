@@ -449,24 +449,6 @@ function findPathToNode(root, nodeName, path = []) {
     return null;
 }
 
-// Check if one path is an ancestor of another (shares common prefix)
-function pathsHaveAncestorRelation(path1, path2) {
-    // Check if path1's node is an ancestor of path2's node or vice versa
-    const node1 = path1[path1.length - 1];
-    const node2 = path2[path2.length - 1];
-
-    // Check if node1 is in path2 (making node1 an ancestor of node2)
-    for (let i = 0; i < path2.length - 1; i++) {
-        if (path2[i] === node1) return { hasRelation: true, ancestorPath: path1, descendantPath: path2 };
-    }
-
-    // Check if node2 is in path1 (making node2 an ancestor of node1)
-    for (let i = 0; i < path1.length - 1; i++) {
-        if (path1[i] === node2) return { hasRelation: true, ancestorPath: path2, descendantPath: path1 };
-    }
-
-    return { hasRelation: false };
-}
 
 // Generate extended Newick with proper tau-parent handling
 // This version properly handles bidirectional introgression
