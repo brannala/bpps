@@ -52,7 +52,7 @@ class Main extends Component {
                   <li><NavLink to="/CtrlFile">Create Control File</NavLink></li>
                 </ul>
                 <div className="content">
-                  <Route exact path="/" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts} parseError={this.state.parseError} /> } />
+                  <Route exact path="/" render={(props) => <Sequences {...props} readFile={this.readFile} locusArray={this.state.locusArray} locusCounts={this.state.locusCounts} parseError={this.state.parseError} sequenceData={this.state.sequenceData} seqFileName={this.state.seqFileName} /> } />
                   <Route path="/MapFile" render={(props) => <MapFile {...props} sequenceData={this.state.sequenceData} seqFileName={this.state.seqFileName}/> } />
                   <Route path="/CtrlFile" render={(props) => <CtrlFile {...props} sequenceData={this.state.sequenceData} seqFileName={this.state.seqFileName}/> } />
                 </div>

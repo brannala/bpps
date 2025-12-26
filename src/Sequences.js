@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import './DisplaySeqs.css';
 import DisplaySeqs from "./DisplaySeqs";
 import GetFile from "./GetFile";
+import SubsetSelector from "./SubsetSelector";
 import { detectFormat, convertToBpp, downloadAsFile } from "./FormatConvert";
 import { ErrorBanner } from "./ErrorMessage";
 
@@ -215,6 +216,13 @@ class Sequences extends Component {
                       </span>
                     </div>
                   </div>
+                )}
+
+                {hasLoci && (
+                  <SubsetSelector
+                    sequenceData={this.props.sequenceData}
+                    seqFileName={this.props.seqFileName}
+                  />
                 )}
               </div>
             </div>
