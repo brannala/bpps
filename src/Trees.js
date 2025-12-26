@@ -377,44 +377,244 @@ function escapeRegex(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// Simpler approach: generate extended Newick from string manipulation
+// Parse a Newick string into a tree structure (minNode format)
+// Handles internal node labels after closing parentheses
+function parseNewick(newickStr) {
+    // Remove trailing semicolon and whitespace
+    let str = newickStr.trim().replace(/;$/, '').trim();
+    let pos = 0;
+
+    function parseNode(parent) {
+        const node = new minNode('', null, null, parent);
+
+        if (str[pos] === '(') {
+            // Internal node - parse children
+            pos++; // skip '('
+            node.left = parseNode(node);
+
+            // Skip comma and whitespace
+            while (pos < str.length && (str[pos] === ',' || str[pos] === ' ')) pos++;
+
+            node.right = parseNode(node);
+
+            // Skip closing paren
+            if (str[pos] === ')') pos++;
+
+            // Parse internal node label (if any)
+            let label = '';
+            while (pos < str.length && str[pos] !== ',' && str[pos] !== ')' && str[pos] !== ';' && str[pos] !== ':') {
+                label += str[pos];
+                pos++;
+            }
+            node.name = label.trim() || 'internal';
+        } else {
+            // Leaf node - parse name
+            let name = '';
+            while (pos < str.length && str[pos] !== ',' && str[pos] !== ')' && str[pos] !== ';' && str[pos] !== ':') {
+                name += str[pos];
+                pos++;
+            }
+            node.name = name.trim();
+        }
+
+        // Skip branch length if present
+        if (pos < str.length && str[pos] === ':') {
+            pos++;
+            while (pos < str.length && /[0-9.eE+-]/.test(str[pos])) pos++;
+        }
+
+        return node;
+    }
+
+    return parseNode(null);
+}
+
+// Find the path from root to a node with given name
+function findPathToNode(root, nodeName, path = []) {
+    if (root === null) return null;
+
+    path.push(root);
+
+    if (root.name === nodeName) {
+        return [...path];
+    }
+
+    const leftPath = findPathToNode(root.left, nodeName, path);
+    if (leftPath) return leftPath;
+
+    const rightPath = findPathToNode(root.right, nodeName, path);
+    if (rightPath) return rightPath;
+
+    path.pop();
+    return null;
+}
+
+// Check if one path is an ancestor of another (shares common prefix)
+function pathsHaveAncestorRelation(path1, path2) {
+    // Check if path1's node is an ancestor of path2's node or vice versa
+    const node1 = path1[path1.length - 1];
+    const node2 = path2[path2.length - 1];
+
+    // Check if node1 is in path2 (making node1 an ancestor of node2)
+    for (let i = 0; i < path2.length - 1; i++) {
+        if (path2[i] === node1) return { hasRelation: true, ancestorPath: path1, descendantPath: path2 };
+    }
+
+    // Check if node2 is in path1 (making node2 an ancestor of node1)
+    for (let i = 0; i < path1.length - 1; i++) {
+        if (path1[i] === node2) return { hasRelation: true, ancestorPath: path2, descendantPath: path1 };
+    }
+
+    return { hasRelation: false };
+}
+
+// Generate extended Newick with proper tau-parent handling
+// This version properly handles bidirectional introgression
 function generateExtendedNewickFromString(baseNewick, events, defaultPhi = 0.5) {
     if (!baseNewick || !events || events.length === 0) {
         return baseNewick.endsWith(';') ? baseNewick : baseNewick + ';';
     }
 
-    let newick = baseNewick.replace(/;$/, ''); // Remove trailing semicolon
+    // Parse the tree to understand structure
+    const tree = parseNewick(baseNewick);
+
+    // For each event, determine where hybrid nodes go and their tau-parent settings
+    // Structure: hybridInfo[label] = { sourceNode, targetNode, sourceTauParent, targetTauParent }
+    const hybridInfo = [];
 
     events.forEach((event, idx) => {
         const hybridLabel = `H${idx + 1}`;
-        const source = event.source;
-        const target = event.target;
+        const sourcePath = findPathToNode(tree, event.source, []);
+        const targetPath = findPathToNode(tree, event.target, []);
+
+        if (!sourcePath || !targetPath) {
+            console.warn(`Could not find path for event ${event.source} -> ${event.target}`);
+            return;
+        }
+
+        hybridInfo.push({
+            label: hybridLabel,
+            source: event.source,
+            target: event.target,
+            sourcePath,
+            targetPath,
+            phi: defaultPhi
+        });
+    });
+
+    // Check for bidirectional introgression or overlapping events
+    // When events share species (A→B and B→A), we need special tau-parent handling
+    // to avoid ancestor-descendant conflicts between hybrid node occurrences
+
+    // First, detect if we have bidirectional or overlapping events
+    const involvedSpecies = new Map(); // species -> list of event indices where it appears
+    hybridInfo.forEach((info, idx) => {
+        if (!involvedSpecies.has(info.source)) involvedSpecies.set(info.source, []);
+        if (!involvedSpecies.has(info.target)) involvedSpecies.set(info.target, []);
+        involvedSpecies.get(info.source).push({ idx, role: 'source' });
+        involvedSpecies.get(info.target).push({ idx, role: 'target' });
+    });
+
+    // Check for species that appear in multiple events (bidirectional or complex patterns)
+    let hasOverlappingEvents = false;
+    involvedSpecies.forEach((appearances) => {
+        if (appearances.length > 1) {
+            // This species is involved in multiple events
+            const sourceCount = appearances.filter(a => a.role === 'source').length;
+            const targetCount = appearances.filter(a => a.role === 'target').length;
+
+            // Overlapping occurs when:
+            // 1. Species is both source and target (bidirectional)
+            // 2. Species is source of multiple events (creates nested source wrappers)
+            // Note: multiple targets seems OK based on testing (case #3 worked)
+            if ((sourceCount > 0 && targetCount > 0) || sourceCount > 1) {
+                hasOverlappingEvents = true;
+            }
+        }
+    });
+
+    // Set tau-parent values
+    hybridInfo.forEach((info, idx) => {
+        if (hasOverlappingEvents) {
+            // For bidirectional/overlapping patterns:
+            // BOTH sides need tau-parent=yes to avoid ancestor-descendant conflicts
+            // This constrains all hybrid node times to parent node times
+            info.sourceTauParent = 'yes';
+            info.targetTauParent = 'yes';
+        } else {
+            // Simple case: no overlap, both can have independent times
+            info.sourceTauParent = 'no';
+            info.targetTauParent = 'no';
+        }
+    });
+
+    // Build the extended Newick by modifying the tree
+    // We'll work on the string for now but with correct tau-parent values
+    let newick = baseNewick.replace(/;$/, '');
+
+    // Process events in order
+    hybridInfo.forEach((info) => {
+        const { label, source, target, phi, sourceTauParent, targetTauParent } = info;
 
         // Step 1: Annotate source - wrap it with hybrid node
-        // Find source node and wrap: source -> (source)H[&phi=X,&tau-parent=no]
-        const sourcePattern = new RegExp(`([(,])\\s*(${escapeRegex(source)})(\\s*[,):\\[])`, 'g');
+        // Need to find the source, handling the case where it may already be wrapped
+        const sourcePattern = new RegExp(
+            `([(,]\\s*)(${escapeRegex(source)})(\\s*[,):\\[])`,
+            'g'
+        );
         let sourceReplaced = false;
         newick = newick.replace(sourcePattern, (match, prefix, name, suffix) => {
             if (!sourceReplaced) {
                 sourceReplaced = true;
-                return `${prefix}(${name})${hybridLabel}[&phi=${defaultPhi},&tau-parent=no]${suffix}`;
+                return `${prefix}(${name})${label}[&phi=${phi},&tau-parent=${sourceTauParent}]${suffix}`;
             }
             return match;
         });
 
+        // If source wasn't found directly, it might already be wrapped - try alternative pattern
+        if (!sourceReplaced) {
+            const wrappedSourcePattern = new RegExp(
+                `(\\(${escapeRegex(source)}\\))([^\\[]*\\[[^\\]]*\\])`,
+                'g'
+            );
+            newick = newick.replace(wrappedSourcePattern, (match, wrapped, annotation) => {
+                if (!sourceReplaced) {
+                    sourceReplaced = true;
+                    return `(${wrapped}${annotation})${label}[&phi=${phi},&tau-parent=${sourceTauParent}]`;
+                }
+                return match;
+            });
+        }
+
         // Step 2: Add target-side hybrid node
-        // Find target and add hybrid as ancestor: target -> (target, H[&tau-parent=yes])
-        // But we need to be careful not to double-wrap
-        const targetPattern = new RegExp(`([(,])\\s*(${escapeRegex(target)})(\\s*[,):\\[])`, 'g');
+        // Find target and insert hybrid reference
+        const targetPattern = new RegExp(
+            `([(,]\\s*)(${escapeRegex(target)})(\\s*[,):\\[])`,
+            'g'
+        );
         let targetReplaced = false;
         newick = newick.replace(targetPattern, (match, prefix, name, suffix) => {
-            if (!targetReplaced && name !== source) { // Don't replace if same as source
+            if (!targetReplaced) {
                 targetReplaced = true;
-                // Create a new clade with target and hybrid ancestor marker
-                return `${prefix}(${name}, ${hybridLabel}[&tau-parent=yes])${suffix}`;
+                return `${prefix}(${name}, ${label}[&tau-parent=${targetTauParent}])${suffix}`;
             }
             return match;
         });
+
+        // If target wasn't found directly, try wrapped version
+        if (!targetReplaced) {
+            const wrappedTargetPattern = new RegExp(
+                `(\\(${escapeRegex(target)}\\))([^\\[]*\\[[^\\]]*\\])`,
+                'g'
+            );
+            newick = newick.replace(wrappedTargetPattern, (match, wrapped, annotation) => {
+                if (!targetReplaced) {
+                    targetReplaced = true;
+                    return `(${wrapped}${annotation}, ${label}[&tau-parent=${targetTauParent}])`;
+                }
+                return match;
+            });
+        }
     });
 
     return newick + ';';

@@ -4,3 +4,11 @@ node_modules
 .#*
 *#
 /src/testfuncs
+
+# Electron build output
+dist/
+*.dmg
+*.AppImage
+*.deb
+*.exe
+*.snap

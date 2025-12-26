@@ -2,6 +2,9 @@
   "name": "bpps",
   "version": "0.1.0",
   "private": true,
+  "main": "electron/main.js",
+  "author": "Bruce Rannala",
+  "description": "BPP Control File Generator - A tool for creating control files for BPP phylogenetic analysis",
   "dependencies": {
     "file-saver": "^2.0.1",
     "gh-pages": "^6.3.0",
@@ -14,12 +17,17 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "predeploy": "npm run build",
+    "predeploy": "PUBLIC_URL=https://brannala.github.io/bpps npm run build",
     "deploy": "gh-pages -d build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron:dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && ELECTRON_DEV=true electron . --no-sandbox\"",
+    "electron:build": "npm run build && electron-builder",
+    "electron:build:win": "npm run build && electron-builder --win",
+    "electron:build:mac": "npm run build && electron-builder --mac",
+    "electron:build:linux": "npm run build && electron-builder --linux"
   },
-  "homepage": "https://brannala.github.io/bpps",
+  "homepage": "./",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -28,5 +36,39 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "electron": "^39.2.7",
+    "electron-builder": "^26.0.12",
+    "wait-on": "^9.0.3"
+  },
+  "build": {
+    "appId": "com.brannala.bpps",
+    "productName": "BPP Control File Generator",
+    "files": [
+      "build/**/*",
+      "electron/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.education",
+      "target": ["dmg", "zip"]
+    },
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Science"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
 }
