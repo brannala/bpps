@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import TreeVisualizer from "./TreeVisualizer";
-import { generateExtendedNewickFromString } from "./Trees";
+import { generateExtendedNewickFromString, areContemporaneous } from "./Trees";
 import "./CtrlFile.css";
 
 class IntrogressionSection extends Component {
@@ -120,8 +120,11 @@ class IntrogressionSection extends Component {
         } = this.props;
 
         const hasEnoughSpecies = speciesList && speciesList.length >= 2;
-        // Use speciesList for dropdown to ensure names match tree positions
-        const branchNames = speciesList || [];
+        // Use all node names (tips + internal) for dropdown to allow ancestral introgression
+        const { allNodeNames } = this.props;
+        const branchNames = (allNodeNames && allNodeNames.all && allNodeNames.all.length > 0)
+            ? allNodeNames.all
+            : speciesList || [];
 
         // For tree visualization, show introgression as dashed arrows
         const introgressionRoutes = introgressionConfig.events.map(e => ({
@@ -247,9 +250,12 @@ class IntrogressionSection extends Component {
                                             onChange={(e) => this.setState({ newTarget: e.target.value })}
                                         >
                                             <option value="">Target...</option>
-                                            {branchNames.filter(n => n !== this.state.newSource).map(name => (
-                                                <option key={name} value={name}>{name}</option>
-                                            ))}
+                                            {branchNames
+                                                .filter(n => n !== this.state.newSource)
+                                                .filter(n => !this.state.newSource || !treeObject || areContemporaneous(this.state.newSource, n, treeObject))
+                                                .map(name => (
+                                                    <option key={name} value={name}>{name}</option>
+                                                ))}
                                         </select>
                                         <button
                                             type="button"

@@ -2,11 +2,35 @@ import React, { Component } from 'react';
 var FileSaver = require('file-saver');
 
 
-function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesList,ctrlFileOpts,numberSeqs,nTree,labeledNewick,priors,migrationConfig,introgressionConfig) {
+function createControlFileText(seqFileName,mapFileName,mapData,seqData,speciesList,ctrlFileOpts,numberSeqs,nTree,labeledNewick,priors,migrationConfig,introgressionConfig,singleSpeciesMode) {
 
     let controlFileText = "";
     let nloci = seqData.length;
 
+    // Single species mode: simplified control file without Imap, tauprior, or tree
+    if (singleSpeciesMode) {
+        controlFileText += `    seed = ${ctrlFileOpts.seed} \n`;
+        controlFileText += `    seqfile = ${seqFileName} \n`;
+        controlFileText += `    jobname = ${ctrlFileOpts.jobname} \n\n`;
+        controlFileText += `    speciesdelimitation = 0\n`;
+        controlFileText += `    speciestree = 0 \n`;
+        controlFileText += `    species&tree = 1  ${speciesList[0]}\n`;
+        controlFileText += `                      ${numberSeqs}\n`;
+        controlFileText += `    phase = ${Number(ctrlFileOpts.diploid)}\n`;
+        controlFileText += "    cleandata = 0\n";
+        controlFileText += "    usedata = 1\n";
+        controlFileText += `    nloci = ${nloci}  \n`;
+        controlFileText += `    thetaprior = invgamma ${priors.priorTheta.a}  ${priors.priorTheta.b.toPrecision(2)} \n`;
+        // No tauprior for single species (no divergence times)
+        controlFileText += "    finetune = 1 Gage:0.02 Gspr:0.02 tau:0.02 mix:0.02 lrht:0.02 phis:0.02 pi:0.02 \n";
+        controlFileText += "    print = 1 0 0 0 \n";
+        controlFileText += `    burnin = ${ctrlFileOpts.burnin} \n`;
+        controlFileText += `    sampfreq = ${ctrlFileOpts.sampleFreq} \n`;
+        controlFileText += `    nsample = ${ctrlFileOpts.mcmcSamples} \n`;
+        return controlFileText;
+    }
+
+    // Multi-species mode: full control file
     // Determine tree string based on model:
     // - Introgression: use extended Newick from introgressionConfig
     // - Migration: use labeled Newick (includes internal node labels)
@@ -87,7 +111,8 @@ class CreateControlFile extends Component {
             let text = createControlFileText(this.props.seqFileName,this.props.mapFileName,this.props.mapData,
                                              this.props.sequenceData,this.props.speciesList,this.props.ctrlFileOpts,
                                              this.props.numberSeqs,this.props.nTree,this.props.labeledNewick,
-                                             this.props.priors,this.props.migrationConfig,this.props.introgressionConfig);
+                                             this.props.priors,this.props.migrationConfig,this.props.introgressionConfig,
+                                             this.props.singleSpeciesMode);
 
             let blob = new Blob([text],{type: "text/plain;charset=utf-8"});
 	    let downloadClick = (e) => { FileSaver.saveAs(blob,controlFileName); }

@@ -34,25 +34,30 @@ function seqToSpecName(uniqueNames,regExp_SpName)
     return { matchedSeqs: sqToSN, unmatchedSeqs: unmatched };
 }
 // returns a formatted string for creating map file
+// Handles both traditional format (SpeciesName^SpecimenID) and simple format (just sequence names)
 function createMapFileText(seqMatches)
 {
     let mapFileText = "";
-    let rExp = new RegExp('.*\\^.+');
     let mapData = [];
     try{
 	if(seqMatches.matchedSeqs.length>0)
 	{
-	    for(let i in seqMatches.matchedSeqs)
-		for(let j in seqMatches.matchedSeqs[i].seqNames)
-		    if(seqMatches.matchedSeqs[i].seqNames[j].match(rExp)===null)
-		        throw new Error("Sequence labels must be of format SpeciesName^SpecimenName. Sequence name was missing ^");
-
             // get mapData as spName + specimen IDs
 	    for(let i in seqMatches.matchedSeqs)
             {
                 let specimenID = [];
                 for(let j in seqMatches.matchedSeqs[i].seqNames)
-                    specimenID.push(seqMatches.matchedSeqs[i].seqNames[j].substr(seqMatches.matchedSeqs[i].seqNames[j].indexOf('^')+1,));
+                {
+                    const seqName = seqMatches.matchedSeqs[i].seqNames[j];
+                    const caretIndex = seqName.indexOf('^');
+                    if (caretIndex > 0) {
+                        // Traditional format: extract specimen ID after ^
+                        specimenID.push(seqName.substr(caretIndex + 1));
+                    } else {
+                        // Simple format: use full sequence name as specimen ID
+                        specimenID.push(seqName);
+                    }
+                }
 
                 specimenID = [...new Set(specimenID)];
                 mapData.push({specimen: specimenID, spName: seqMatches.matchedSeqs[i].spName});

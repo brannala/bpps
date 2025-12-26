@@ -707,3 +707,54 @@ dl {
     font-size: 0.8em;
     color: #4a6352;
 }
+
+/* ==================== */
+/* Single species mode */
+/* ==================== */
+
+.single-species-content {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.single-species-content p {
+    color: #4a6352;
+    margin-bottom: 24px;
+}
+
+.single-species-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.single-species-form label {
+    font-weight: 600;
+    color: #1e3a29;
+}
+
+.single-species-input {
+    width: 150px;
+    padding: 10px 14px;
+    border: 2px solid #d4e5d8;
+    border-radius: 8px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1em;
+}
+
+.single-species-input:focus {
+    outline: none;
+    border-color: #4a7c59;
+}
+
+.single-species-complete {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.single-species-complete p {
+    color: #4a7c59;
+    font-weight: 600;
+}

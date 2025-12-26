@@ -41,9 +41,16 @@ class CtrlFile extends Component {
                        treeEditMode: false,
                        sprSelectedNode: null,  // First node selected for SPR
                        newickInput: "",
-                       newickError: null
+                       newickError: null,
+                       // Single species mode (no map file needed)
+                       singleSpeciesMode: false,
+                       singleSpeciesName: ''
                      };
         this.handleMapFileRead = this.handleMapFileRead.bind(this);
+        this.handleEnableSingleSpeciesMode = this.handleEnableSingleSpeciesMode.bind(this);
+        this.handleSingleSpeciesNameChange = this.handleSingleSpeciesNameChange.bind(this);
+        this.handleApplySingleSpecies = this.handleApplySingleSpecies.bind(this);
+        this.handleExitSingleSpeciesMode = this.handleExitSingleSpeciesMode.bind(this);
         this.clearMapFileError = this.clearMapFileError.bind(this);
         this.clearMapFileWarning = this.clearMapFileWarning.bind(this);
         this.handleSpecDelimCheckbox = this.handleSpecDelimCheckbox.bind(this);
@@ -177,7 +184,77 @@ class CtrlFile extends Component {
                 enabled: false,
                 routes: [],
                 wprior: { alpha: 2, beta: 200 }
-            }
+            },
+            // Exit single species mode when loading a map file
+            singleSpeciesMode: false,
+            singleSpeciesName: ''
+        });
+    }
+
+    // Enable single species mode
+    handleEnableSingleSpeciesMode() {
+        this.setState({ singleSpeciesMode: true, singleSpeciesName: '' });
+    }
+
+    // Handle species name input change
+    handleSingleSpeciesNameChange(e) {
+        this.setState({ singleSpeciesName: e.target.value });
+    }
+
+    // Apply single species configuration
+    handleApplySingleSpecies() {
+        const speciesName = this.state.singleSpeciesName.trim();
+        if (!speciesName) {
+            this.setState({ mapFileError: 'Please enter a species name' });
+            return;
+        }
+
+        // Count total sequences across all loci
+        let totalSeqs = 0;
+        if (this.props.sequenceData && this.props.sequenceData.length > 0) {
+            // For single species, count unique sequence names across first locus
+            // (assuming all loci have same sequences)
+            totalSeqs = parseInt(this.props.sequenceData[0].noseqs, 10);
+        }
+
+        if (totalSeqs === 0) {
+            this.setState({ mapFileError: 'No sequence data loaded. Please upload a sequence file first.' });
+            return;
+        }
+
+        // Set up state for single species (pseudo map data with size > 0 to enable control file)
+        const singleSpeciesMap = new Map();
+        singleSpeciesMap.set(speciesName, totalSeqs);
+
+        this.setState({
+            mapData: singleSpeciesMap,
+            mapFileName: '',  // No map file
+            speciesList: [speciesName],
+            nTree: speciesName,  // Single species "tree" is just the name
+            treeObject: null,  // No tree structure needed
+            labeledNewick: '',
+            allNodeNames: { tips: [speciesName], internal: [], all: [speciesName] },
+            seqBySpecies: [],
+            priors: { priorTheta: { a: 3.0, b: 0.002 }, priorTau: { a: 3.0, b: 0.002 } },
+            numberSeqs: totalSeqs.toString(),
+            mapFileError: null,
+            mapFileWarning: null
+        });
+    }
+
+    // Exit single species mode
+    handleExitSingleSpeciesMode() {
+        this.setState({
+            singleSpeciesMode: false,
+            singleSpeciesName: '',
+            mapData: [],
+            mapFileName: '',
+            speciesList: [],
+            nTree: '',
+            treeObject: null,
+            labeledNewick: '',
+            allNodeNames: { tips: [], internal: [], all: [] },
+            numberSeqs: []
         });
     }
 
@@ -708,8 +785,59 @@ class CtrlFile extends Component {
               <div className="mapfile-box">
                 <h2>Step 3: Create Control File</h2>
 
-                {/* Map file upload at top */}
-                <MapFileUpload sequenceData={this.props.sequenceData} readFile={this.handleMapFileRead} />
+                {/* Map file upload or single species mode */}
+                {!this.state.singleSpeciesMode ? (
+                    <div className="map-options">
+                        <MapFileUpload sequenceData={this.props.sequenceData} readFile={this.handleMapFileRead} />
+                        <div className="single-species-toggle">
+                            <span>or</span>
+                            <button
+                                type="button"
+                                className="smallButton single-species-btn"
+                                onClick={this.handleEnableSingleSpeciesMode}
+                            >
+                                Single Population Analysis
+                            </button>
+                            <span className="single-species-hint">(no map file needed)</span>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="single-species-panel">
+                        <div className="single-species-header">
+                            <span className="single-species-label">Single Population Analysis</span>
+                            <button
+                                type="button"
+                                className="smallButton back-button"
+                                onClick={this.handleExitSingleSpeciesMode}
+                            >
+                                Back
+                            </button>
+                        </div>
+                        <div className="single-species-form">
+                            <label>Population name:</label>
+                            <input
+                                type="text"
+                                value={this.state.singleSpeciesName}
+                                onChange={this.handleSingleSpeciesNameChange}
+                                placeholder="e.g., H or Human"
+                                className="single-species-input"
+                            />
+                            <button
+                                type="button"
+                                className="smallButton"
+                                onClick={this.handleApplySingleSpecies}
+                                disabled={!this.state.singleSpeciesName.trim()}
+                            >
+                                Apply
+                            </button>
+                        </div>
+                        {this.state.mapData.size > 0 && (
+                            <div className="single-species-info">
+                                Population "{this.state.speciesList[0]}" with {this.state.numberSeqs} sequences configured.
+                            </div>
+                        )}
+                    </div>
+                )}
                 <ErrorBanner message={this.state.mapFileError} onDismiss={this.clearMapFileError} />
                 <WarningBanner message={this.state.mapFileWarning} onDismiss={this.clearMapFileWarning} />
 
@@ -718,7 +846,8 @@ class CtrlFile extends Component {
                                    mapFileName={this.state.mapFileName} ctrlFileOpts={this.state.ctrlFileOpts} speciesList={this.state.speciesList}
                                    numberSeqs={this.state.numberSeqs} nTree={this.state.nTree} labeledNewick={this.state.labeledNewick}
                                    priors={this.state.priors} migrationConfig={this.state.migrationConfig}
-                                   introgressionConfig={this.state.introgressionConfig}></CreateControlFile>
+                                   introgressionConfig={this.state.introgressionConfig}
+                                   singleSpeciesMode={this.state.singleSpeciesMode}></CreateControlFile>
 
                 {/* Options below - full width */}
                 <CtrlFileOptions mapData={this.state.mapData} ctrlFileOpts={this.state.ctrlFileOpts}

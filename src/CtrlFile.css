@@ -1273,3 +1273,92 @@
     justify-content: space-between;
     margin-bottom: 4px;
 }
+
+/* ==================== */
+/* Single Species Mode */
+/* ==================== */
+
+.map-options {
+    margin-bottom: 16px;
+}
+
+.single-species-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e8efe9;
+}
+
+.single-species-toggle span {
+    color: #7a9882;
+}
+
+.single-species-btn {
+    background: linear-gradient(135deg, #e8b931 0%, #d4a52a 100%) !important;
+    color: #1e3a29 !important;
+}
+
+.single-species-hint {
+    font-size: 0.85em;
+    font-style: italic;
+}
+
+.single-species-panel {
+    background: linear-gradient(135deg, #f8faf8 0%, #f0f5f1 100%);
+    border: 2px solid #d4e5d8;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.single-species-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2ebe4;
+}
+
+.single-species-label {
+    font-weight: 600;
+    color: #1e3a29;
+    font-size: 1.1em;
+}
+
+.single-species-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.single-species-form label {
+    font-weight: 600;
+    color: #4a6352;
+}
+
+.single-species-input {
+    width: 150px;
+    padding: 10px 14px;
+    border: 2px solid #d4e5d8;
+    border-radius: 8px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 1em;
+}
+
+.single-species-input:focus {
+    outline: none;
+    border-color: #4a7c59;
+}
+
+.single-species-info {
+    margin-top: 16px;
+    padding: 12px;
+    background: #e8f5eb;
+    border-radius: 8px;
+    color: #4a7c59;
+    font-weight: 600;
+}

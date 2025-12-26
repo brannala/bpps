@@ -534,24 +534,85 @@ function generateExtendedNewickFromString(baseNewick, events, defaultPhi = 0.5) 
     // We'll work on the string for now but with correct tau-parent values
     let newick = baseNewick.replace(/;$/, '');
 
+    // Helper function to find the matching opening paren for a closing paren
+    function findMatchingOpenParen(str, closePos) {
+        let depth = 1;
+        for (let i = closePos - 1; i >= 0; i--) {
+            if (str[i] === ')') depth++;
+            else if (str[i] === '(') {
+                depth--;
+                if (depth === 0) return i;
+            }
+        }
+        return -1;
+    }
+
+    // Helper function to wrap an internal node's clade for source introgression
+    function wrapInternalSource(newickStr, nodeName, hybridLabel, phi, tauParent) {
+        // Find )nodeName pattern
+        const pattern = new RegExp(`\\)${escapeRegex(nodeName)}(?=[,);\\[]|$)`);
+        const match = pattern.exec(newickStr);
+        if (!match) return { str: newickStr, replaced: false };
+
+        const closeParenPos = match.index;
+        const openParenPos = findMatchingOpenParen(newickStr, closeParenPos);
+        if (openParenPos === -1) return { str: newickStr, replaced: false };
+
+        // Wrap the entire clade: (...)nodeName -> ((...)nodeName)H[...]
+        const before = newickStr.substring(0, openParenPos);
+        const clade = newickStr.substring(openParenPos, match.index + match[0].length);
+        const after = newickStr.substring(match.index + match[0].length);
+
+        return {
+            str: `${before}(${clade})${hybridLabel}[&phi=${phi},&tau-parent=${tauParent}]${after}`,
+            replaced: true
+        };
+    }
+
+    // Helper function to add hybrid node inside an internal node's clade for target introgression
+    function addHybridToInternalTarget(newickStr, nodeName, hybridLabel, tauParent) {
+        // Find )nodeName pattern
+        const pattern = new RegExp(`\\)${escapeRegex(nodeName)}(?=[,);\\[]|$)`);
+        const match = pattern.exec(newickStr);
+        if (!match) return { str: newickStr, replaced: false };
+
+        const closeParenPos = match.index;
+        // Insert hybrid reference just before the closing paren: (...) -> (..., H[...])
+        const before = newickStr.substring(0, closeParenPos);
+        const after = newickStr.substring(closeParenPos);
+
+        return {
+            str: `${before}, ${hybridLabel}[&tau-parent=${tauParent}]${after}`,
+            replaced: true
+        };
+    }
+
     // Process events in order
     hybridInfo.forEach((info) => {
         const { label, source, target, phi, sourceTauParent, targetTauParent } = info;
 
         // Step 1: Annotate source - wrap it with hybrid node
-        // Need to find the source, handling the case where it may already be wrapped
-        const sourcePattern = new RegExp(
+        let sourceReplaced = false;
+
+        // Try tip node pattern first: preceded by ( or ,
+        const tipSourcePattern = new RegExp(
             `([(,]\\s*)(${escapeRegex(source)})(\\s*[,):\\[])`,
             'g'
         );
-        let sourceReplaced = false;
-        newick = newick.replace(sourcePattern, (match, prefix, name, suffix) => {
+        newick = newick.replace(tipSourcePattern, (match, prefix, name, suffix) => {
             if (!sourceReplaced) {
                 sourceReplaced = true;
                 return `${prefix}(${name})${label}[&phi=${phi},&tau-parent=${sourceTauParent}]${suffix}`;
             }
             return match;
         });
+
+        // Try internal node pattern: preceded by ) - need to wrap entire clade
+        if (!sourceReplaced) {
+            const result = wrapInternalSource(newick, source, label, phi, sourceTauParent);
+            newick = result.str;
+            sourceReplaced = result.replaced;
+        }
 
         // If source wasn't found directly, it might already be wrapped - try alternative pattern
         if (!sourceReplaced) {
@@ -569,19 +630,27 @@ function generateExtendedNewickFromString(baseNewick, events, defaultPhi = 0.5) 
         }
 
         // Step 2: Add target-side hybrid node
-        // Find target and insert hybrid reference
-        const targetPattern = new RegExp(
+        let targetReplaced = false;
+
+        // Try tip node pattern first: preceded by ( or ,
+        const tipTargetPattern = new RegExp(
             `([(,]\\s*)(${escapeRegex(target)})(\\s*[,):\\[])`,
             'g'
         );
-        let targetReplaced = false;
-        newick = newick.replace(targetPattern, (match, prefix, name, suffix) => {
+        newick = newick.replace(tipTargetPattern, (match, prefix, name, suffix) => {
             if (!targetReplaced) {
                 targetReplaced = true;
                 return `${prefix}(${name}, ${label}[&tau-parent=${targetTauParent}])${suffix}`;
             }
             return match;
         });
+
+        // Try internal node pattern: add hybrid inside the clade
+        if (!targetReplaced) {
+            const result = addHybridToInternalTarget(newick, target, label, targetTauParent);
+            newick = result.str;
+            targetReplaced = result.replaced;
+        }
 
         // If target wasn't found directly, try wrapped version
         if (!targetReplaced) {

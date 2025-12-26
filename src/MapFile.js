@@ -51,11 +51,11 @@ function MapIsDone(props)
 class MapFile extends Component {
     constructor(props) {
         super(props);
-        // mode: null = initial choice, 'auto' = auto-guessed, 'manual' = manual assignment
+        // mode: null = initial choice, 'auto' = auto-guessed, 'manual' = manual assignment, 'single' = single species
         this.state = { seqMatches: {matchedSeqs: [],  unmatchedSeqs: uniqueSeqNames(this.props.sequenceData)},
                        uniqSeqs: uniqueSeqNames(this.props.sequenceData), regExp_SpName: [], filters: [], mapDone: false,
                        selectedSeqs: new Set(), lastSelectedIndex: null, mode: null, regexExpanded: false, filtersExpanded: false,
-                       formError: null, regexError: null };
+                       formError: null, regexError: null, singleSpeciesName: '' };
         this.addFilter = this.addFilter.bind(this);
         this.autoGuessFromPrefix = this.autoGuessFromPrefix.bind(this);
         this.handleSelectionChange = this.handleSelectionChange.bind(this);
@@ -63,6 +63,8 @@ class MapFile extends Component {
         this.handleSelectNone = this.handleSelectNone.bind(this);
         this.assignSelectedToSpecies = this.assignSelectedToSpecies.bind(this);
         this.chooseManualMode = this.chooseManualMode.bind(this);
+        this.chooseSingleSpeciesMode = this.chooseSingleSpeciesMode.bind(this);
+        this.assignAllToSingleSpecies = this.assignAllToSingleSpecies.bind(this);
         this.goBackToChoice = this.goBackToChoice.bind(this);
         this.toggleRegexExpanded = this.toggleRegexExpanded.bind(this);
         this.toggleFiltersExpanded = this.toggleFiltersExpanded.bind(this);
@@ -83,6 +85,46 @@ class MapFile extends Component {
         this.setState({ mode: 'manual' });
     }
 
+    // Choose single species mode
+    chooseSingleSpeciesMode() {
+        this.setState({ mode: 'single', singleSpeciesName: '' });
+    }
+
+    // Assign all sequences to a single species
+    assignAllToSingleSpecies(e) {
+        e.preventDefault();
+        this.setState({ formError: null });
+        const speciesName = this.state.singleSpeciesName.trim();
+
+        if (!speciesName) {
+            this.setState({ formError: "Please enter a species name" });
+            return;
+        }
+
+        const allSeqs = [...this.state.uniqSeqs];
+        // Create a regex that matches all sequences
+        const escapedNames = allSeqs.map(name =>
+            name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        );
+        const regexPattern = `^(${escapedNames.join('|')})$`;
+        const rExp = new RegExp(regexPattern);
+
+        const regExp_SpN = [{ reg_exp: rExp, spName: speciesName }];
+        const filterArray = [{
+            text: `${speciesName} + [${allSeqs.length} sequences]`,
+            key: Date.now()
+        }];
+
+        const seqMc = seqToSpecName([...this.state.uniqSeqs], regExp_SpN);
+
+        this.setState({
+            filters: filterArray,
+            regExp_SpName: regExp_SpN,
+            seqMatches: seqMc,
+            mapDone: true
+        });
+    }
+
     // Go back to initial choice screen
     goBackToChoice() {
         this.setState({
@@ -93,7 +135,8 @@ class MapFile extends Component {
             mapDone: false,
             selectedSeqs: new Set(),
             lastSelectedIndex: null,
-            regexExpanded: false
+            regexExpanded: false,
+            singleSpeciesName: ''
         });
     }
 
@@ -269,7 +312,71 @@ class MapFile extends Component {
                       Use when sequence names don't follow a standard pattern
                     </span>
                   </div>
+                  <div className="mode-choice-option" onClick={this.chooseSingleSpeciesMode}>
+                    <h3>Single Species</h3>
+                    <p>All sequences belong to one species/population</p>
+                    <span className="mode-choice-hint">
+                      Use for single-population coalescent analysis
+                    </span>
+                  </div>
                 </div>
+              </div>
+            </div>
+        );
+    }
+
+    renderSingleSpeciesView() {
+        return (
+            <div>
+              <div className="mapfile-box">
+                <h2>Step 2: Create Map File</h2>
+                <div className="mode-header">
+                  <button onClick={this.goBackToChoice} className="smallButton back-button">
+                    Back
+                  </button>
+                  <span className="mode-label">Single Species Mode</span>
+                </div>
+                <ErrorBanner message={this.state.formError} onDismiss={this.clearFormError} />
+                <div className="single-species-content">
+                  <p>All {this.state.uniqSeqs.length} sequences will be assigned to a single species.</p>
+                  <form onSubmit={this.assignAllToSingleSpecies} className="single-species-form">
+                    <label>Species name:</label>
+                    <input
+                      type="text"
+                      value={this.state.singleSpeciesName}
+                      onChange={(e) => this.setState({ singleSpeciesName: e.target.value })}
+                      placeholder="e.g., H or Human"
+                      className="single-species-input"
+                    />
+                    <button type="submit" className="smallButton">
+                      Assign All
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+        );
+    }
+
+    renderSingleSpeciesComplete() {
+        return (
+            <div>
+              <div className="mapfile-box">
+                <h2>Step 2: Create Map File</h2>
+                <div className="mode-header">
+                  <button onClick={this.goBackToChoice} className="smallButton back-button">
+                    Back
+                  </button>
+                  <span className="mode-label">
+                    Single species: {this.state.seqMatches.matchedSeqs[0]?.spName}
+                  </span>
+                </div>
+                <div className="single-species-complete">
+                  <p>All {this.state.uniqSeqs.length} sequences assigned to species "{this.state.seqMatches.matchedSeqs[0]?.spName}"</p>
+                </div>
+              </div>
+              <div>
+                <MapIsDone mapDone={this.state.mapDone} seqMatches={this.state.seqMatches} seqFileName={this.props.seqFileName}/>
               </div>
             </div>
         );
@@ -402,6 +509,13 @@ class MapFile extends Component {
         // Show choice screen if no mode selected yet
         if (this.state.mode === null) {
             return this.renderChoiceScreen();
+        }
+        // Single species mode
+        if (this.state.mode === 'single') {
+            if (this.state.mapDone) {
+                return this.renderSingleSpeciesComplete();
+            }
+            return this.renderSingleSpeciesView();
         }
         // If auto mode and all sequences matched, show simplified view
         if (this.state.mode === 'auto' && this.state.seqMatches.unmatchedSeqs.length === 0) {
