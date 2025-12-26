@@ -16,11 +16,11 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            build_cmd: npm run electron:build:win
+            build_cmd: npm run electron:build:win -- -p never
           - os: macos-latest
-            build_cmd: npm run electron:build:mac
+            build_cmd: npm run electron:build:mac -- -p never
           - os: ubuntu-latest
-            build_cmd: npm run electron:build:linux
+            build_cmd: npm run electron:build:linux -- -p never
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
