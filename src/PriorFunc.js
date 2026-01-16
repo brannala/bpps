@@ -425,7 +425,7 @@ function coalescentVarianceFromBetweenSpecies(sequences)
     let totalMean = 0;
     let pairCount = 0;
 
-    for (const [pairKey, data] of pairData) {
+    for (const [, data] of pairData) {
         if (data.length < 2) continue;
 
         const n = data.length;
