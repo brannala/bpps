@@ -357,6 +357,103 @@ function maxDistance(sequences)
     return maxDist;
 }
 
+// Calculate coalescent variance from between-species pairwise distances
+// For each species pair, compute variance across loci, then extract coalescent component
+// Var(D) = Var(mut)/L + θ²  (for proportions, mutation variance = mean/L)
+// So θ² = Var(D) - mean(D)/L
+function coalescentVarianceFromBetweenSpecies(sequences)
+{
+    // Collect distances and sequence lengths for each species pair across loci
+    // pairData[pairKey] = array of {dist, seqLen} across loci
+    const pairData = new Map();
+
+    for(let locus of sequences)
+    {
+        const numSpecies = locus.length;
+        if (numSpecies < 2) continue;
+
+        // For each pair of species at this locus
+        for(let sp1 = 0; sp1 < numSpecies - 1; sp1++)
+        {
+            for(let sp2 = sp1 + 1; sp2 < numSpecies; sp2++)
+            {
+                const pairKey = `${sp1}_${sp2}`;
+                const seqs1 = locus[sp1];
+                const seqs2 = locus[sp2];
+
+                // Get sequence length from first sequence at this locus
+                const seqLen = seqs1[0].length;
+
+                // Calculate average distance for this pair at this locus
+                // (average over all sequence pairs within the species pair)
+                let sumDist = 0;
+                let count = 0;
+                const pairsAtLocus = seqs1.length * seqs2.length;
+
+                if (pairsAtLocus <= MAX_PAIRS_SAMPLE) {
+                    for(let seq1 of seqs1)
+                    {
+                        for(let seq2 of seqs2)
+                        {
+                            sumDist += pairwiseDistance(seq1, seq2);
+                            count++;
+                        }
+                    }
+                } else {
+                    // Sample random pairs for large datasets
+                    while (count < MAX_PAIRS_SAMPLE) {
+                        const i = Math.floor(Math.random() * seqs1.length);
+                        const j = Math.floor(Math.random() * seqs2.length);
+                        sumDist += pairwiseDistance(seqs1[i], seqs2[j]);
+                        count++;
+                    }
+                }
+
+                const avgDistAtLocus = count > 0 ? sumDist / count : 0;
+
+                if (!pairData.has(pairKey)) {
+                    pairData.set(pairKey, []);
+                }
+                pairData.get(pairKey).push({ dist: avgDistAtLocus, seqLen: seqLen });
+            }
+        }
+    }
+
+    // For each species pair, compute variance and mean across loci
+    // Then extract coalescent variance: var - mean/avgSeqLen
+    let totalCoalescentVar = 0;
+    let totalMean = 0;
+    let pairCount = 0;
+
+    for (const [pairKey, data] of pairData) {
+        if (data.length < 2) continue;
+
+        const n = data.length;
+        const distances = data.map(d => d.dist);
+        const mean = distances.reduce((sum, d) => sum + d, 0) / n;
+        const variance = distances.reduce((sum, d) => sum + (d - mean) * (d - mean), 0) / (n - 1);
+
+        // Average sequence length for this pair across loci
+        const avgSeqLen = data.reduce((sum, d) => sum + d.seqLen, 0) / n;
+
+        // Coalescent variance = total variance - mutation variance
+        // For proportions, mutation variance ≈ mean / seqLen
+        const mutationVar = mean / avgSeqLen;
+        const coalescentVar = variance - mutationVar;
+
+        totalCoalescentVar += coalescentVar;
+        totalMean += mean;
+        pairCount++;
+    }
+
+    if (pairCount === 0) return { coalescentVariance: 0, mean: 0 };
+
+    return {
+        coalescentVariance: totalCoalescentVar / pairCount,
+        mean: totalMean / pairCount
+    };
+}
+
 function priorFromSeqs(sequences)
 {
     let priorMeanTheta=0;
@@ -369,10 +466,24 @@ function priorFromSeqs(sequences)
             priorMeanTheta += avgDistance(species);
     }
     priorMeanTheta = priorMeanTheta/totalSpecies;
+
+    // Fallback: if within-species theta is 0 (single samples per species),
+    // estimate ancestral theta from coalescent variance in between-species distances
+    if (priorMeanTheta === 0 || isNaN(priorMeanTheta)) {
+        const { coalescentVariance, mean } = coalescentVarianceFromBetweenSpecies(sequences);
+        // θ² ≈ coalescent variance, so θ ≈ sqrt(coalescent variance)
+        if (coalescentVariance > 0) {
+            priorMeanTheta = Math.sqrt(coalescentVariance);
+        } else {
+            // If coalescent variance is negligible, use fraction of mean distance
+            priorMeanTheta = mean / 10.0;
+        }
+    }
+
     priorRootAge=maxDistance(sequences);
     const priorTheta = { a: 3.0, b: priorMeanTheta*2.0 }
     const priorTau = { a: 3.0, b:priorRootAge*2.0 }
-    return { priorTheta: priorTheta, priorTau: priorTau }; 
+    return { priorTheta: priorTheta, priorTau: priorTau };
 }
 
 
