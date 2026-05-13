@@ -1,13 +1,13 @@
 {
-  "main.css": "/bpps/static/css/main.9947d3f3.chunk.css",
-  "main.js": "/bpps/static/js/main.bb2687c0.chunk.js",
-  "main.js.map": "/bpps/static/js/main.bb2687c0.chunk.js.map",
-  "runtime~main.js": "/bpps/static/js/runtime~main.5990acac.js",
-  "runtime~main.js.map": "/bpps/static/js/runtime~main.5990acac.js.map",
-  "static/js/2.db278810.chunk.js": "/bpps/static/js/2.db278810.chunk.js",
-  "static/js/2.db278810.chunk.js.map": "/bpps/static/js/2.db278810.chunk.js.map",
-  "index.html": "/bpps/index.html",
-  "precache-manifest.de55a5dafa8db563db457d1e7971fe99.js": "/bpps/precache-manifest.de55a5dafa8db563db457d1e7971fe99.js",
-  "service-worker.js": "/bpps/service-worker.js",
-  "static/css/main.9947d3f3.chunk.css.map": "/bpps/static/css/main.9947d3f3.chunk.css.map"
+  "files": {
+    "main.css": "https://brannala.github.io/bpps/static/css/main.7376d34a.css",
+    "main.js": "https://brannala.github.io/bpps/static/js/main.bd073a67.js",
+    "index.html": "https://brannala.github.io/bpps/index.html",
+    "main.7376d34a.css.map": "https://brannala.github.io/bpps/static/css/main.7376d34a.css.map",
+    "main.bd073a67.js.map": "https://brannala.github.io/bpps/static/js/main.bd073a67.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7376d34a.css",
+    "static/js/main.bd073a67.js"
+  ]
 }
